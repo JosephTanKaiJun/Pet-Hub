@@ -3,10 +3,11 @@ package com.example.pethub.chat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
+import com.bumptech.glide.Glide;
 import com.example.pethub.R;
 
 import java.util.List;
@@ -35,6 +36,10 @@ public class SitterAdapter extends RecyclerView.Adapter<SitterAdapter.SitterView
     @Override
     public void onBindViewHolder(@NonNull SitterViewHolder holder, int position) {
         Sitter sitter = sitters.get(position);
+        Glide.with(holder.itemView.getContext())
+                .load(sitter.getPhotoResId())
+                .placeholder(R.drawable.default_avatar)
+                .into(holder.ivSitterIcon);
         holder.tvName.setText(sitter.getName());
         holder.tvBio.setText(sitter.getBio());
         holder.tvSkills.setText(sitter.getSkills());
@@ -48,12 +53,14 @@ public class SitterAdapter extends RecyclerView.Adapter<SitterAdapter.SitterView
 
     static class SitterViewHolder extends RecyclerView.ViewHolder {
         TextView tvName, tvBio, tvSkills;
+        ImageView ivSitterIcon;
 
         public SitterViewHolder(@NonNull View itemView) {
             super(itemView);
             tvName = itemView.findViewById(R.id.tvName);
             tvBio = itemView.findViewById(R.id.tvBio);
             tvSkills = itemView.findViewById(R.id.tvSkills);
+            ivSitterIcon = itemView.findViewById(R.id.ivSitterIcon);
         }
     }
 }

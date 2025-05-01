@@ -11,7 +11,7 @@ import java.util.Random;
 import com.example.pethub.chat.Message;
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "pethub.db";
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 3;
 
     // Sitters table
     private static final String TABLE_SITTERS = "sitters";
@@ -42,7 +42,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + COLUMN_NAME + " TEXT,"
                 + COLUMN_BIO + " TEXT,"
                 + COLUMN_SKILLS + " TEXT,"
-                + COLUMN_EMAIL + " TEXT)");
+                + COLUMN_EMAIL + " TEXT,"
+                + "PHOTO_RES_ID INTEGER)");
 
         // Messages table
         db.execSQL("CREATE TABLE " + TABLE_MESSAGES + "("
@@ -62,14 +63,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     // Sitter methods
-    public void addSitter(String name, String bio, String skills, String email) {
+    // Add this overloaded method
+    public void addSitter(String name, String bio, String skills, String email, int photoResId) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put(COLUMN_NAME, name);
-        values.put(COLUMN_BIO, bio);
-        values.put(COLUMN_SKILLS, skills);
-        values.put(COLUMN_EMAIL, email);
-        db.insert(TABLE_SITTERS, null, values);
+        values.put("NAME", name);
+        values.put("BIO", bio);
+        values.put("SKILLS", skills);
+        values.put("EMAIL", email);
+        values.put("PHOTO_RES_ID", photoResId); // Add this line
+        db.insert("SITTERS", null, values);
         db.close();
     }
 
@@ -88,6 +91,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(COLUMN_IS_USER, isUser ? 1 : 0);
         db.insert(TABLE_MESSAGES, null, values);
         db.close();
+    }
+
+    public int getSittersCount() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM " + TABLE_SITTERS, null);
+        cursor.moveToFirst();
+        int count = cursor.getInt(0);
+        cursor.close();
+        return count;
     }
 
     public List<com.example.pethub.chat.Message> getMessages(int userId, int sitterId) {

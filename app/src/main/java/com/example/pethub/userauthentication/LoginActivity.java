@@ -19,7 +19,8 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         databaseHelper = new AuthDatabaseHelper(this);
-
+        binding.signupRedirectText.setOnClickListener(v ->
+                startActivity(new Intent(LoginActivity.this, SignupActivity.class)));
         binding.loginButton.setOnClickListener(v -> {
             String email = binding.loginEmail.getText().toString();
             String password = binding.loginPassword.getText().toString();
@@ -34,8 +35,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        binding.signupRedirectText.setOnClickListener(v ->
-                startActivity(new Intent(LoginActivity.this, SignupActivity.class)));
+
     }
 
     private void startMainActivity(int userId) {

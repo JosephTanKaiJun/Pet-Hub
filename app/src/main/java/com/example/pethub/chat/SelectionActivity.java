@@ -32,17 +32,19 @@ public class SelectionActivity extends AppCompatActivity implements SitterAdapte
             finish();
         }
 
+
+
         dbHelper = new DatabaseHelper(this);
         initializeUI();
         loadSitters();
+        if (dbHelper.getSittersCount() == 0) {
+            addTestData();
+        }
     }
 
     private void initializeUI() {
         sitterRecyclerView = findViewById(R.id.sitterRecyclerView);
         sitterRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-        Button btnAddTestData = findViewById(R.id.btnAddTestData);
-        btnAddTestData.setOnClickListener(v -> addTestData());
     }
 
     private void loadSitters() {
@@ -56,7 +58,8 @@ public class SelectionActivity extends AppCompatActivity implements SitterAdapte
                         cursor.getString(1),
                         cursor.getString(2),
                         cursor.getString(3),
-                        cursor.getString(4)
+                        cursor.getString(4),
+                        cursor.getInt(5)
                 ));
             } while(cursor.moveToNext());
         }
@@ -76,8 +79,17 @@ public class SelectionActivity extends AppCompatActivity implements SitterAdapte
     }
 
     private void addTestData() {
-        dbHelper.addSitter("Ava Lively", "Cat specialist", "Pets", "ava@example.com");
-        dbHelper.addSitter("John Green", "Plant expert", "Plants", "john@example.com");
+
+        // Add sitters with correct photo resources
+        dbHelper.addSitter("Alice Smith", "Dog Lover", "Dogs, Walking", "alice@example.com", R.drawable.user1);
+        dbHelper.addSitter("Elia Johnson", "Cat Expert", "Cats, Grooming", "bob@example.com", R.drawable.user2);
+        dbHelper.addSitter("Charlie Brown", "Bird Specialist", "Birds, Training", "charlie@example.com", R.drawable.user3);
+        dbHelper.addSitter("Ronaldo7", "Exotic Pets", "Reptiles, Hamsters", "diana@example.com", R.drawable.user4);
+        dbHelper.addSitter("Elon Mask", "Pet Sitting", "All Pets", "evan@example.com", R.drawable.user5);
         loadSitters();
     }
+
+
+
+
 }

@@ -20,6 +20,14 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <ImageView
+            android:id="@+id/ivSitterIcon"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/default_avatar"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
         <TextView
             android:id="@+id/tvName"
             android:layout_width="0dp"

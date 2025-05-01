@@ -8,7 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class AuthDatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "users.db";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 3;
 
     // Users table
     private static final String TABLE_USERS = "users";
