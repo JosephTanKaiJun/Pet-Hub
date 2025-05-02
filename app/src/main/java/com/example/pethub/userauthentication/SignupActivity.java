@@ -19,15 +19,16 @@ public class SignupActivity extends AppCompatActivity {
         databaseHelper = new AuthDatabaseHelper(this);
 
         binding.signupButton.setOnClickListener(v -> {
+            String username = binding.signupUsername.getText().toString();
             String email = binding.signupEmail.getText().toString();
             String password = binding.signupPassword.getText().toString();
             String confirmPassword = binding.signupConfirm.getText().toString();
 
             if (!password.equals(confirmPassword)) {
                 showToast("Passwords don't match");
-            } else if (databaseHelper.checkUser(email)) {
-                showToast("User already exists");
-            } else if (databaseHelper.insertUser(email, password)) {
+            } else if (databaseHelper.checkUser(username)) { // Check username existence
+                showToast("Username already exists");
+            } else if (databaseHelper.insertUser(username, email, password)) {
                 showToast("Signup successful");
                 startActivity(new Intent(this, LoginActivity.class));
                 finish();

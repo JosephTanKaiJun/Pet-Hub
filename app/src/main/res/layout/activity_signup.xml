@@ -17,7 +17,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="350dp"
+            android:layout_marginTop="150dp"
             android:orientation="vertical"
             android:padding="20dp">
 
@@ -28,9 +28,19 @@
                 android:layout_height="60dp"
                 android:layout_marginTop="30dp"
                 android:background="@drawable/blue_border"
-                android:drawableLeft="@drawable/baseline_email_24"
+                android:drawableLeft="@drawable/ic_email"
                 android:drawablePadding="8dp"
                 android:hint="Email"
+                android:padding="8dp" />
+            <EditText
+                android:id="@+id/signupUsername"
+                android:layout_width="350dp"
+                android:layout_height="60dp"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/blue_border"
+                android:drawableLeft="@drawable/ic_username"
+                android:drawablePadding="8dp"
+                android:hint="Username"
                 android:padding="8dp" />
 
             <EditText

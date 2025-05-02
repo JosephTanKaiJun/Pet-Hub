@@ -22,13 +22,13 @@ public class LoginActivity extends AppCompatActivity {
         binding.signupRedirectText.setOnClickListener(v ->
                 startActivity(new Intent(LoginActivity.this, SignupActivity.class)));
         binding.loginButton.setOnClickListener(v -> {
-            String email = binding.loginEmail.getText().toString();
+            String username = binding.loginUsername.getText().toString(); // Changed from email
             String password = binding.loginPassword.getText().toString();
 
-            if (email.isEmpty() || password.isEmpty()) {
+            if (username.isEmpty() || password.isEmpty()) {
                 showToast("All fields required");
-            } else if (databaseHelper.checkCredentials(email, password)) {
-                int userId = databaseHelper.getUserId(email);
+            } else if (databaseHelper.checkCredentials(username, password)) { // Use username
+                int userId = databaseHelper.getUserId(username); // Use username
                 startMainActivity(userId);
             } else {
                 showToast("Invalid credentials");
