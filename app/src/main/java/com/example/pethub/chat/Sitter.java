@@ -9,13 +9,15 @@ public class Sitter {
     private int photoResId;
 
     public Sitter(int id, String name, String bio, String skills, String email, int photoResId) {
+        if (name == null || name.trim().isEmpty()) {
+            throw new IllegalArgumentException("Name cannot be empty");
+        }
         this.id = id;
         this.name = name;
-        this.bio = bio;
-        this.skills = skills;
-        this.email = email;
+        this.bio = bio != null ? bio : "";
+        this.skills = skills != null ? skills : "";
+        this.email = email != null ? email : "";
         this.photoResId = photoResId;
-
     }
 
     public int getId() { return id; }

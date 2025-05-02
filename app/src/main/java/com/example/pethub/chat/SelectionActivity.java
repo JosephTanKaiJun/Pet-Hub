@@ -1,7 +1,9 @@
 package com.example.pethub.chat;
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.Toast;
@@ -79,14 +81,34 @@ public class SelectionActivity extends AppCompatActivity implements SitterAdapte
     }
 
     private void addTestData() {
+        // First create users
+        addTestUser("Alice Smith", "S123", "alice@example.com", R.drawable.user1);
+        addTestUser("Bob Johnson", "S456", "bob@example.com", R.drawable.user2);
+        addTestUser("Charlie Brown", "S789", "charlie@example.com", R.drawable.user3);
 
-        // Add sitters with correct photo resources
-        dbHelper.addSitter("Alice Smith", "Dog Lover", "Dogs, Walking", "alice@example.com", R.drawable.user1);
-        dbHelper.addSitter("Elia Johnson", "Cat Expert", "Cats, Grooming", "bob@example.com", R.drawable.user2);
-        dbHelper.addSitter("Charlie Brown", "Bird Specialist", "Birds, Training", "charlie@example.com", R.drawable.user3);
-        dbHelper.addSitter("Ronaldo7", "Exotic Pets", "Reptiles, Hamsters", "diana@example.com", R.drawable.user4);
-        dbHelper.addSitter("Elon Mask", "Pet Sitting", "All Pets", "evan@example.com", R.drawable.user5);
+        // Then add them as sitters
+        addTestSitter(1, "Dog lover with 5 years experience", true, false, 25.0, 0.0, "Dogs, Walking");
+        addTestSitter(2, "Certified cat behaviorist", true, false, 30.0, 0.0, "Cats, Grooming");
+        addTestSitter(3, "Exotic pet specialist", true, true, 35.0, 20.0, "Reptiles, Birds");
+
         loadSitters();
+    }
+
+    private void addTestUser(String name, String studentId, String email, int photoResId) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(DatabaseHelper.COLUMN_NAME, name);
+        values.put(DatabaseHelper.COLUMN_STUDENT_ID, studentId);
+        values.put(DatabaseHelper.COLUMN_EMAIL, email);
+        values.put("PHOTO_RES_ID", photoResId);
+        values.put(DatabaseHelper.COLUMN_IS_SITTER, 1);
+        db.insert(DatabaseHelper.TABLE_USERS, null, values);
+        db.close();
+    }
+
+    private void addTestSitter(int userId, String bio, boolean carePets, boolean carePlants,
+                               double petRate, double plantRate, String skills) {
+        dbHelper.addSitter(userId, bio, carePets, carePlants, petRate, plantRate, skills);
     }
 
 

@@ -19,4 +19,8 @@
     <color name="teal_700">#FF018786</color>
     <color name="beige">#FFEADAD2</color>
     <color name="blue">#FF063970</color>
+    <color name="textColorPrimary">@android:color/black</color>
+    <color name="textColorSecondary">@android:color/darker_gray</color>
+    <color name="cardBackground">#DCF8C6</color>
+
 </resources>

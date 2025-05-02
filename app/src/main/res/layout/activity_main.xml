@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+
     android:background="@drawable/mainpage_bg"
     tools:context=".main.MainActivity">
 
@@ -121,5 +122,6 @@
             android:scaleType="fitCenter"
             android:contentDescription="Profile"/>
     </LinearLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -59,8 +59,11 @@ public class HireActivity extends AppCompatActivity {
         TextView tvSitterSkills = findViewById(R.id.tvSitterSkills);
         TextView tvSitterEmail = findViewById(R.id.tvSitterEmail);
 
-        Glide.with(this).load(sitter.getPhotoResId()+1).placeholder(R.drawable.default_avatar).into(ivSitterPhoto);
+        Glide.with(this).load(sitter.getPhotoResId()).placeholder(R.drawable.default_avatar).into(ivSitterPhoto);
         tvSitterName.setText(sitter.getName());
+        tvSitterBio.setText(sitter.getBio());
+        tvSitterSkills.setText(sitter.getSkills());
+        tvSitterEmail.setText(sitter.getEmail());        tvSitterName.setText(sitter.getName());
         tvSitterBio.setText(sitter.getBio());
         tvSitterSkills.setText(sitter.getSkills());
         tvSitterEmail.setText(sitter.getEmail());
