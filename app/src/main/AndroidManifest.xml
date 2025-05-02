@@ -31,6 +31,9 @@
         <activity
             android:name=".chat.ChatActivity"
             android:label="Chat"/>
+        <activity android:name=".chat.HireActivity" />
+        <activity android:name=".chat.BookingActivity" />
+
     </application>
 
 </manifest>

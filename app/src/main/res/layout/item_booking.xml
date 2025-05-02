@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="12dp"
+    android:layout_marginVertical="8dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="4dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <!-- Status Bar at the top -->
+        <View
+            android:id="@+id/statusBar"
+            android:layout_width="match_parent"
+            android:layout_height="8dp"
+            android:background="#4CAF50"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- Pet Image -->
+        <ImageView
+            android:id="@+id/profilepic"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:background="#F0F0F0"
+            android:padding="8dp"
+            android:src="@drawable/default_avatar"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/statusBar" />
+
+        <!-- Booking Header -->
+        <TextView
+            android:id="@+id/tvBookingHeader"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="Pet Sitting Appointment"
+            android:textColor="#333333"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/profilepic"
+            app:layout_constraintTop_toBottomOf="@id/statusBar" />
+
+        <!-- Status Badge -->
+        <TextView
+            android:id="@+id/tvStatusBadge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/status_badge_bg"
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="4dp"
+            android:text="Confirmed"
+            android:textColor="#FFFFFF"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="@id/tvBookingHeader"
+            app:layout_constraintTop_toBottomOf="@id/tvBookingHeader" />
+
+        <!-- Divider -->
+        <View
+            android:id="@+id/divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="16dp"
+            android:background="#E0E0E0"
+            app:layout_constraintTop_toBottomOf="@id/profilepic" />
+
+        <!-- Details Section -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/detailsSection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            app:layout_constraintTop_toBottomOf="@id/divider">
+
+            <!-- Sitter Row -->
+            <ImageView
+                android:id="@+id/icSitter"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/default_avatar"
+                android:tint="#757575"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tvSitterLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:text="Sitter:"
+                android:textColor="#757575"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="@id/icSitter"
+                app:layout_constraintStart_toEndOf="@id/icSitter"
+                app:layout_constraintTop_toTopOf="@id/icSitter" />
+
+            <TextView
+                android:id="@+id/tvSitterName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="Sarah Johnson"
+                android:textColor="#212121"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@id/tvSitterLabel"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/tvSitterLabel"
+                app:layout_constraintTop_toTopOf="@id/tvSitterLabel" />
+
+            <!-- Date Row -->
+            <ImageView
+                android:id="@+id/icDate"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginTop="12dp"
+                android:src="@drawable/default_avatar"
+                android:tint="#757575"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/icSitter" />
+
+            <TextView
+                android:id="@+id/tvDateLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:text="Date:"
+                android:textColor="#757575"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="@id/icDate"
+                app:layout_constraintStart_toEndOf="@id/icDate"
+                app:layout_constraintTop_toTopOf="@id/icDate" />
+
+            <TextView
+                android:id="@+id/tvDate"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="May 15, 2023 (10:00 AM - 2:00 PM)"
+                android:textColor="#212121"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="@id/tvDateLabel"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/tvDateLabel"
+                app:layout_constraintTop_toTopOf="@id/tvDateLabel" />
+
+            <!-- Pet Type Row -->
+            <ImageView
+                android:id="@+id/icPetType"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginTop="12dp"
+                android:src="@drawable/default_avatar"
+                android:tint="#757575"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/icDate" />
+
+            <TextView
+                android:id="@+id/tvPetTypeLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:text="Pet Type:"
+                android:textColor="#757575"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="@id/icPetType"
+                app:layout_constraintStart_toEndOf="@id/icPetType"
+                app:layout_constraintTop_toTopOf="@id/icPetType" />
+
+            <TextView
+                android:id="@+id/tvPetType"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="Dog"
+                android:textColor="#212121"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="@id/tvPetTypeLabel"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/tvPetTypeLabel"
+                app:layout_constraintTop_toTopOf="@id/tvPetTypeLabel" />
+
+            <!-- Species Row -->
+            <ImageView
+                android:id="@+id/icSpecies"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginTop="12dp"
+                android:src="@drawable/default_avatar"
+                android:tint="#757575"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/icPetType" />
+
+            <TextView
+                android:id="@+id/tvSpeciesLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:text="Species:"
+                android:textColor="#757575"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="@id/icSpecies"
+                app:layout_constraintStart_toEndOf="@id/icSpecies"
+                app:layout_constraintTop_toTopOf="@id/icSpecies" />
+
+            <TextView
+                android:id="@+id/tvSpecies"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="Golden Retriever"
+                android:textColor="#212121"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="@id/tvSpeciesLabel"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/tvSpeciesLabel"
+                app:layout_constraintTop_toTopOf="@id/tvSpeciesLabel" />
+
+            <!-- Remarks Row -->
+            <ImageView
+                android:id="@+id/icRemarks"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginTop="12dp"
+                android:src="@drawable/default_avatar"
+                android:tint="#757575"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/icSpecies" />
+
+            <TextView
+                android:id="@+id/tvRemarksLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:text="Remarks:"
+                android:textColor="#757575"
+                android:textSize="14sp"
+                app:layout_constraintStart_toEndOf="@id/icRemarks"
+                app:layout_constraintTop_toTopOf="@id/icRemarks" />
+
+            <TextView
+                android:id="@+id/tvRemarks"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="Needs medication at noon. Friendly with other dogs."
+                android:textColor="#212121"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/tvRemarksLabel"
+                app:layout_constraintTop_toTopOf="@id/tvRemarksLabel" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- Action Buttons -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="8dp"
+            app:layout_constraintTop_toBottomOf="@id/detailsSection">
+
+            <Button
+                android:id="@+id/btnViewDetails"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="4dp"
+                android:layout_weight="1"
+                android:background="@drawable/button_outline_bg"
+                android:text="View Details"
+                android:textColor="#FF8C00"
+                android:textSize="14sp" />
+
+            <Button
+                android:id="@+id/btnContact"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:layout_weight="1"
+                android:background="@drawable/ic_hire"
+                android:text="Contact Sitter"
+                android:textColor="#FFFFFF"
+                android:textSize="14sp" />
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.material.card.MaterialCardView>

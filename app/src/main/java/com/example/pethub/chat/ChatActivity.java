@@ -1,6 +1,8 @@
 package com.example.pethub.chat;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -8,13 +10,8 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import com.example.pethub.database.DatabaseHelper;
-import android.os.Bundle;
-import androidx.appcompat.app.AppCompatActivity;
-import com.example.pethub.database.DatabaseHelper;
-import com.example.pethub.userauthentication.LoginActivity;
 import com.example.pethub.R;
-import com.example.pethub.chat.Message;
+import com.example.pethub.database.DatabaseHelper;
 import java.util.List;
 
 public class ChatActivity extends AppCompatActivity {
@@ -28,18 +25,29 @@ public class ChatActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.chat_activity);
+        setContentView(R.layout.activity_chat);
 
         userId = getIntent().getIntExtra("USER_ID", -1);
         sitterId = getIntent().getIntExtra("SITTER_ID", -1);
         String sitterName = getIntent().getStringExtra("SITTER_NAME");
 
-        if(userId == -1 || sitterId == -1) {
+        if (userId == -1 || sitterId == -1) {
             Toast.makeText(this, "Error loading chat", Toast.LENGTH_SHORT).show();
             finish();
+            return;
         }
+
         ImageButton btnBack = findViewById(R.id.btnBack);
         btnBack.setOnClickListener(v -> finish());
+
+        Button btnHire = findViewById(R.id.btnHire);
+        btnHire.setOnClickListener(v -> {
+            Intent intent = new Intent(this, HireActivity.class);
+            intent.putExtra("USER_ID", userId);
+            intent.putExtra("SITTER_ID", sitterId);
+            startActivity(intent);
+        });
+
         dbHelper = new DatabaseHelper(this);
         initializeUI(sitterName);
         loadMessages();
@@ -60,7 +68,7 @@ public class ChatActivity extends AppCompatActivity {
 
     private void sendMessage() {
         String message = etMessage.getText().toString().trim();
-        if(!message.isEmpty()) {
+        if (!message.isEmpty()) {
             dbHelper.addMessage(userId, sitterId, message, true);
             etMessage.setText("");
             loadMessages();
@@ -75,6 +83,4 @@ public class ChatActivity extends AppCompatActivity {
             chatRecyclerView.scrollToPosition(messages.size() - 1);
         }
     }
-
-
 }
