@@ -25,6 +25,8 @@
         <activity android:name=".sitter.SitterApplicationActivity" />
         <activity android:name=".sitter.SitterMainActivity" android:theme="@style/AppTheme" />
         <activity android:name=".sitter.SitterEditActivity" android:theme="@style/AppTheme" />
+        <activity android:name=".sitter.OwnerEditActivity"/>
+        <activity android:name=".sitter.OwnerMainActivity"/>
     </application>
 
 </manifest>
