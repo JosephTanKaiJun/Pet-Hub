@@ -72,8 +72,11 @@ public class SitterApplicationActivity extends AppCompatActivity {
             Uri imageUri = data.getData();
             try {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
-                binding.imageviewProfilePreview.setImageBitmap(bitmap);
-                profilePictureFilename = saveImageToInternalStorage(bitmap);
+                // Resize bitmap to match ImageView dimensions (120dp)
+                int targetSize = (int) (120 * getResources().getDisplayMetrics().density); // Convert dp to pixels
+                Bitmap resizedBitmap = Bitmap.createScaledBitmap(bitmap, targetSize, targetSize, true);
+                binding.imageviewProfilePreview.setImageBitmap(resizedBitmap);
+                profilePictureFilename = saveImageToInternalStorage(resizedBitmap);
             } catch (IOException e) {
                 Toast.makeText(this, "Failed to load image", Toast.LENGTH_SHORT).show();
             }
