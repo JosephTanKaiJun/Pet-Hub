@@ -1,0 +1,25 @@
+<!-- styles.xml -->
+<resources>
+    <!-- Base theme -->
+    <style name="Theme.PetHub" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Primary color, text styles, etc. -->
+        <item name="colorPrimary">#4CAF50</item>
+        <item name="colorPrimaryDark">#388E3C</item>
+        <item name="colorAccent">#063670</item>
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
+
+    <!-- Splash screen theme -->
+    <style name="Theme.PetHub.Splash" parent="Theme.PetHub">
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowBackground">@drawable/splash_background</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowTranslucentNavigation">true</item>
+    </style>
+
+    <!-- Activity transition animations -->
+    <style name="ActivityTransition">
+        <item name="android:windowEnterAnimation">@anim/fade_in</item>
+        <item name="android:windowExitAnimation">@anim/zoom_fade_out</item>
+    </style>
+</resources>

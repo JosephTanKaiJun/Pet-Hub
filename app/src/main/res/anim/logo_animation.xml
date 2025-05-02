@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:ordering="sequentially">
+
+    <!-- First fade in -->
+    <alpha
+        android:duration="500"
+        android:fromAlpha="0.0"
+        android:toAlpha="1.0"
+        android:fillAfter="true"/>
+
+    <!-- Then bounce and rotate -->
+    <set android:ordering="together">
+        <scale
+            android:duration="700"
+            android:fromXScale="1.0"
+            android:fromYScale="1.0"
+            android:pivotX="50%"
+            android:pivotY="50%"
+            android:toXScale="1.2"
+            android:toYScale="1.2"
+            android:interpolator="@android:anim/overshoot_interpolator" />
+
+        <rotate
+            android:duration="700"
+            android:fromDegrees="0"
+            android:toDegrees="360"
+            android:pivotX="50%"
+            android:pivotY="50%"
+            android:interpolator="@android:anim/accelerate_decelerate_interpolator" />
+    </set>
+
+    <!-- Finally, settle back to normal size -->
+    <scale
+        android:duration="300"
+        android:fromXScale="1.2"
+        android:fromYScale="1.2"
+        android:pivotX="50%"
+        android:pivotY="50%"
+        android:toXScale="1.0"
+        android:toYScale="1.0"
+        android:interpolator="@android:anim/decelerate_interpolator" />
+</set>
