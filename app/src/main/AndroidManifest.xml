@@ -50,7 +50,10 @@
         <activity
             android:name=".sitter.SitterEditActivity"
             android:exported="false" />
-
+        <activity
+            android:name=".chat.ConversationListActivity"
+            android:label="Conversations"
+            android:exported="false" />
     </application>
 
 </manifest>

@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.widget.ImageButton;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.pethub.database.DatabaseHelper;
@@ -31,7 +32,8 @@ public class SitterApplicationActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivitySitterApplicationBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
+        ImageButton btnBack = findViewById(R.id.btnBack);
+        btnBack.setOnClickListener(v -> finish());
         // Initialize database
         dbHelper = new DatabaseHelper(this);
 

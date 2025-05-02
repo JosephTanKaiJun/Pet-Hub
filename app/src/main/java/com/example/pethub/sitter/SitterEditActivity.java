@@ -8,8 +8,11 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.widget.ImageButton;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.pethub.R;
 import com.example.pethub.database.DatabaseHelper;
 import com.example.pethub.databinding.ActivitySitterEditBinding;
 import java.io.File;
@@ -31,7 +34,8 @@ public class SitterEditActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivitySitterEditBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
+        ImageButton btnBack = findViewById(R.id.btnBack);
+        btnBack.setOnClickListener(v -> finish());
         dbHelper = new DatabaseHelper(this);
         userId = getIntent().getIntExtra("USER_ID", -1);
         if (userId == -1) {

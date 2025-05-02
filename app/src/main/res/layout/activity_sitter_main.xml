@@ -11,7 +11,8 @@
         android:layout_height="wrap_content"
         android:padding="16dp">
 
-        <!-- Profile Picture -->
+
+
         <ImageView
             android:id="@+id/imageview_profile"
             android:layout_width="120dp"
@@ -29,6 +30,18 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <ImageButton
+            android:id="@+id/btnBack"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:padding="12dp"
+            android:src="@drawable/ic_back"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="16dp"
+            android:layout_marginStart="8dp"
+            />
         <!-- Basic Details Section -->
         <androidx.cardview.widget.CardView
             android:id="@+id/card_basic_details"

@@ -1,4 +1,5 @@
 package com.example.pethub.database;
+import com.example.pethub.chat.Conversation;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -159,7 +160,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public Cursor getAllSitters() {
         SQLiteDatabase db = this.getReadableDatabase();
-        return db.rawQuery("SELECT * FROM " + TABLE_SITTERS, null);
+        return db.rawQuery(
+                "SELECT u." + COLUMN_USER_ID + ", u." + COLUMN_USERNAME + ", s." + COLUMN_BIO +
+                        ", s." + COLUMN_SKILLS + ", u." + COLUMN_EMAIL + ", u." + COLUMN_PHOTO_URI +
+                        " FROM " + TABLE_SITTERS + " s " +
+                        "JOIN " + TABLE_USERS + " u ON s." + COLUMN_USER_ID + " = u." + COLUMN_USER_ID,
+                null
+        );
     }
 
     public boolean isUserSitter(int userId) {
@@ -266,7 +273,55 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.insert(TABLE_MESSAGES, null, values);
         db.close();
     }
+    public List<Conversation> getConversations(int userId) {
+        List<Conversation> conversations = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
 
+        String query = "SELECT DISTINCT "
+                + "CASE WHEN sender_id = ? THEN receiver_id ELSE sender_id END AS partner_id, "
+                + "MAX(" + COLUMN_TIMESTAMP + ") AS latest_timestamp "
+                + "FROM " + TABLE_MESSAGES
+                + " WHERE sender_id = ? OR receiver_id = ? "
+                + "GROUP BY partner_id";
+
+        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(userId), String.valueOf(userId), String.valueOf(userId)});
+
+        if (cursor.moveToFirst()) {
+            do {
+                int partnerId = cursor.getInt(0);
+                String timestamp = cursor.getString(1);
+                String partnerName = getUsername(partnerId); // Use the new method
+                String lastMessage = getLastMessage(userId, partnerId);
+
+                conversations.add(new Conversation(
+                        partnerId,
+                        partnerName, // Now using the username from Users table
+                        lastMessage,
+                        timestamp
+                ));
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+        return conversations;
+    }
+
+    private String getLastMessage(int userA, int userB) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(
+                "SELECT " + COLUMN_CONTENT + " FROM " + TABLE_MESSAGES
+                        + " WHERE (sender_id = ? AND receiver_id = ?) OR (sender_id = ? AND receiver_id = ?) "
+                        + "ORDER BY " + COLUMN_TIMESTAMP + " DESC LIMIT 1",
+                new String[]{String.valueOf(userA), String.valueOf(userB), String.valueOf(userB), String.valueOf(userA)}
+        );
+
+        String lastMessage = "";
+        if (cursor.moveToFirst()) {
+            lastMessage = cursor.getString(0);
+        }
+        cursor.close();
+        return lastMessage;
+    }
     public List<Message> getConversation(int userA, int userB) {
         List<Message> messages = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
@@ -434,7 +489,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cursor.close();
         return exists;
     }
-
+    public String getUsername(int userId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(TABLE_USERS, new String[]{COLUMN_USERNAME}, COLUMN_USER_ID + "=?",
+                new String[]{String.valueOf(userId)}, null, null, null);
+        String username = "";
+        if (cursor.moveToFirst()) {
+            username = cursor.getString(0);
+        }
+        cursor.close();
+        db.close();
+        return username;
+    }
     public int getUserId(String username) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery("SELECT user_id FROM " + TABLE_USERS + " WHERE username = ?",

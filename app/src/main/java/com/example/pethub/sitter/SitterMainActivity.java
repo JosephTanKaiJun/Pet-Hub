@@ -4,8 +4,11 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.widget.ImageButton;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.pethub.R;
 import com.example.pethub.database.DatabaseHelper;
 import com.example.pethub.databinding.ActivitySitterMainBinding;
 import java.io.File;
@@ -23,7 +26,8 @@ public class SitterMainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivitySitterMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
+        ImageButton btnBack = findViewById(R.id.btnBack);
+        btnBack.setOnClickListener(v -> finish());
         dbHelper = new DatabaseHelper(this);
         userId = getIntent().getIntExtra("USER_ID", -1);
         if (userId == -1) {
