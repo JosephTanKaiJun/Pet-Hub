@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:background="#F5F5F5">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+
+        <!-- Profile Picture Section -->
+        <LinearLayout
+            android:id="@+id/layout_profile_picture"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="16dp"
+            android:gravity="center"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <!-- Profile Image -->
+            <ImageView
+                android:id="@+id/imageview_profile_picture"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:layout_marginEnd="16dp"
+                android:src="@drawable/baseline_account_circle_24"
+                android:contentDescription="@string/profile_picture"
+                android:layout_gravity="center" />
+
+        </LinearLayout>
+
+        <!-- Basic Details Section -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/card_basic_details"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="4dp"
+            app:cardBackgroundColor="@color/cardBackground"
+            app:layout_constraintTop_toBottomOf="@id/layout_profile_picture"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:id="@+id/textview_basic_details"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:text="Basic Details"
+                    style="@style/SectionHeader" />
+
+                <LinearLayout
+                    android:id="@+id/layout_basic_details"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <!-- Name Row -->
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="16dp"
+                        android:hint="Name"
+                        app:boxStrokeColor="?attr/colorAccent"
+                        app:hintTextColor="@android:color/darker_gray"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/edittext_name"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textSize="16sp"
+                            android:padding="12dp"
+                            app:hintTextColor="@android:color/darker_gray" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <!-- Student ID Row -->
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="16dp"
+                        android:hint="Student ID"
+                        app:boxStrokeColor="?attr/colorAccent"
+                        app:hintTextColor="@android:color/darker_gray"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/edittext_student_id"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textSize="16sp"
+                            android:padding="12dp"
+                            app:hintTextColor="@android:color/darker_gray" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <!-- Email Row -->
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="16dp"
+                        android:hint="Email"
+                        app:boxStrokeColor="?attr/colorAccent"
+                        app:hintTextColor="@android:color/darker_gray"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/edittext_email"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textSize="16sp"
+                            android:padding="12dp"
+                            android:inputType="textEmailAddress"
+                            app:hintTextColor="@android:color/darker_gray" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <!-- Phone Number Row -->
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="16dp"
+                        android:hint="Phone Number"
+                        app:boxStrokeColor="?attr/colorAccent"
+                        app:hintTextColor="@android:color/darker_gray"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/edittext_phone"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textSize="16sp"
+                            android:padding="12dp"
+                            android:inputType="phone"
+                            app:hintTextColor="@android:color/darker_gray" />
+                    </com.google.android.material.textfield.TextInputLayout>
+                </LinearLayout>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Ownership Section -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/card_ownership"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="4dp"
+            app:cardBackgroundColor="@color/cardBackground"
+            app:layout_constraintTop_toBottomOf="@id/card_basic_details"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:id="@+id/textview_ownership"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:text="Ownership"
+                    style="@style/SectionHeader" />
+
+                <CheckBox
+                    android:id="@+id/edit_checkbox_pets"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:text="Pets"
+                    android:textSize="16sp"
+                    app:buttonTint="?attr/colorAccent" />
+
+                <CheckBox
+                    android:id="@+id/edit_checkbox_plants"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Plants"
+                    android:textSize="16sp"
+                    app:buttonTint="?attr/colorAccent" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Bio Section -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/card_bio"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="4dp"
+            app:cardBackgroundColor="@color/cardBackground"
+            app:layout_constraintTop_toBottomOf="@id/card_ownership"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/layout_bio"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Bio"
+                    app:boxStrokeColor="?attr/colorAccent"
+                    app:hintTextColor="@android:color/darker_gray"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/edittext_bio"
+                        android:layout_width="match_parent"
+                        android:layout_height="100dp"
+                        android:textSize="16sp"
+                        app:hintTextColor="@android:color/darker_gray"
+                        android:padding="12dp"
+                        android:inputType="textMultiLine"
+                        android:gravity="top" />
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Save Button -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_save"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:text="Save Changes"
+            android:paddingHorizontal="24dp"
+            app:cornerRadius="8dp"
+            app:backgroundTint="?attr/colorAccent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/card_bio" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

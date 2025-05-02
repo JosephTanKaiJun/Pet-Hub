@@ -2,6 +2,7 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+<<<<<<< HEAD
     <color name="colorPrimary">#5B37B7</color>
     <color name="colorPrimaryDark">#4A2D93</color>
     <color name="colorAccent">#5B37B7</color>
@@ -19,4 +20,13 @@
     <color name="teal_700">#FF018786</color>
     <color name="beige">#FFEADAD2</color>
     <color name="blue">#FF063970</color>
+=======
+    <color name="colorPrimary">#3F51B5</color> <!-- A nice blue for headers and accents -->
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color> <!-- A pinkish accent for buttons and checkboxes -->
+    <color name="textColorPrimary">#212121</color> <!-- Dark gray for primary text -->
+    <color name="textColorSecondary">#757575</color> <!-- Lighter gray for secondary text -->
+    <color name="cardBackground">#FFFFFF</color> <!-- White for card backgrounds -->
+    <color name="dividerColor">#E0E0E0</color> <!-- Light gray for dividers -->
+>>>>>>> Sitter
 </resources>

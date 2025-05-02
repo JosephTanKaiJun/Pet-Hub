@@ -12,11 +12,20 @@ import com.example.pethub.chat.BookingActivity;
 import com.example.pethub.R;
 import com.example.pethub.userauthentication.AuthDatabaseHelper;
 import com.example.pethub.userauthentication.LoginActivity;
+import com.example.pethub.database.DatabaseHelper;
+import com.example.pethub.databinding.ActivityMainBinding;
+import com.example.pethub.sitter.SitterApplicationActivity;
+import com.example.pethub.sitter.SitterMainActivity;
+import com.example.pethub.database.DatabaseHelper;
 public class MainActivity extends AppCompatActivity {
     private ImageButton searchSitterBtn, sitterSignupBtn, navChat;
-    private int userId;
+    private int userId = 1; // Hardcoded for testing; replace with actual user authentication logic;
     private TextView txtUsername;
     private AuthDatabaseHelper authDbHelper;
+    private ActivityMainBinding binding;
+    private DatabaseHelper dbHelper;
+    // Initialize database
+    dbHelper = new DatabaseHelper(this);
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,8 +52,22 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-        sitterSignupBtn.setOnClickListener(v ->
-                Toast.makeText(this, "Sitter Sign Up clicked", Toast.LENGTH_SHORT).show());
+        sitterSignupBtn.setOnClickListener(v -> {
+            Toast.makeText(this, "Sitter Sign Up clicked", Toast.LENGTH_SHORT).show();
+            if (dbHelper.isUserSitter(userId)) {
+                Intent intent = new Intent(this, SitterMainActivity.class);
+                intent.putExtra("USER_ID", userId);
+                startActivity(intent);
+                finish();
+            } else {
+                Intent intent = new Intent(this, SitterApplicationActivity.class);
+                intent.putExtra("USER_ID", userId);
+                startActivity(intent);
+                finish();
+            }
+        });
+
+
 
         navChat.setOnClickListener(v -> {
             Intent intent = new Intent(this, BookingActivity.class);
