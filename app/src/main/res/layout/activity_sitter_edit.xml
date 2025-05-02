@@ -32,7 +32,6 @@
             android:clipToOutline="true"
             android:outlineProvider="background"
             android:scaleType="centerInside"
-            android:padding="16dp"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

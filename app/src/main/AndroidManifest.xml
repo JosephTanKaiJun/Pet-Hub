@@ -54,6 +54,15 @@
             android:name=".chat.ConversationListActivity"
             android:label="Conversations"
             android:exported="false" />
+
+        <activity
+            android:name=".sitter.OwnerEditActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".sitter.OwnerMainActivity"
+            android:exported="false" />
+
     </application>
 
 </manifest>

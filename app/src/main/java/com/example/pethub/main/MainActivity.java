@@ -16,6 +16,7 @@ import com.example.pethub.chat.ConversationListActivity;
 import com.example.pethub.chat.SelectionActivity;
 import com.example.pethub.chat.BookingActivity;
 import com.example.pethub.R;
+import com.example.pethub.sitter.OwnerMainActivity;
 import com.example.pethub.userauthentication.AuthDatabaseHelper;
 import com.example.pethub.userauthentication.LoginActivity;
 import com.example.pethub.database.DatabaseHelper;
@@ -56,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
         // Set click listeners
         txtUsername.setOnClickListener(v -> showDropdownMenu());
 
+
         searchSitterBtn.setOnClickListener(v -> {
             Intent intent = new Intent(this, SelectionActivity.class);
             intent.putExtra("USER_ID", userId);
@@ -64,11 +66,27 @@ public class MainActivity extends AppCompatActivity {
 
         sitterSignupBtn.setOnClickListener(v -> {
             if (dbHelper.isUserSitter(userId)) {
+                Toast.makeText(this, "You are already a Sitter", Toast.LENGTH_SHORT).show();
+//                Intent intent = new Intent(this, SitterMainActivity.class);
+//                intent.putExtra("USER_ID", userId);
+//                startActivity(intent);
+//                finish();
+            } else {
+                Intent intent = new Intent(this, SitterApplicationActivity.class);
+                intent.putExtra("USER_ID", userId);
+                startActivity(intent);
+                finish();
+            }
+        });
+
+        navHome.setOnClickListener(v -> {
+            Toast.makeText(this, "Profile clicked", Toast.LENGTH_SHORT).show();
+            if (dbHelper.isUserSitter(userId)) {
                 Intent intent = new Intent(this, SitterMainActivity.class);
                 intent.putExtra("USER_ID", userId);
                 startActivity(intent);
             } else {
-                Intent intent = new Intent(this, SitterApplicationActivity.class);
+                Intent intent = new Intent(this, OwnerMainActivity.class);
                 intent.putExtra("USER_ID", userId);
                 startActivity(intent);
             }
