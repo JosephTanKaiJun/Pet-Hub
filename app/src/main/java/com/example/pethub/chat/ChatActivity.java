@@ -21,7 +21,6 @@ public class ChatActivity extends AppCompatActivity {
     private ImageButton btnSend;
     private DatabaseHelper dbHelper;
     private int userId, sitterId;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,7 +29,7 @@ public class ChatActivity extends AppCompatActivity {
         userId = getIntent().getIntExtra("USER_ID", -1);
         sitterId = getIntent().getIntExtra("SITTER_ID", -1);
         String sitterName = getIntent().getStringExtra("SITTER_NAME");
-
+        // Send message
         if (userId == -1 || sitterId == -1) {
             Toast.makeText(this, "Error loading chat", Toast.LENGTH_SHORT).show();
             finish();
@@ -69,18 +68,18 @@ public class ChatActivity extends AppCompatActivity {
     private void sendMessage() {
         String message = etMessage.getText().toString().trim();
         if (!message.isEmpty()) {
-            dbHelper.addMessage(userId, sitterId, message, true);
+            dbHelper.addMessage(userId, sitterId, message);
             etMessage.setText("");
             loadMessages();
         }
     }
 
+    // Update loadMessages() method:
     private void loadMessages() {
-        List<Message> messages = dbHelper.getMessages(userId, sitterId);
-        chatAdapter = new ChatAdapter(messages);
+        List<Message> messages = dbHelper.getConversation(userId, sitterId);
+        chatAdapter = new ChatAdapter(messages, userId); // Pass current user ID
         chatRecyclerView.setAdapter(chatAdapter);
-        if (!messages.isEmpty()) {
-            chatRecyclerView.scrollToPosition(messages.size() - 1);
-        }
     }
+
+
 }

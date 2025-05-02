@@ -91,14 +91,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + "FOREIGN KEY(" + COLUMN_USER_ID + ") REFERENCES " + TABLE_USERS + "(" + COLUMN_USER_ID + "))";
         db.execSQL(CREATE_OWNERS_TABLE);
 
+        // Replace existing messages table creation with:
         db.execSQL("CREATE TABLE " + TABLE_MESSAGES + "("
                 + COLUMN_MESSAGE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-                + COLUMN_USER_ID + " INTEGER,"
-                + COLUMN_SITTER_ID + " INTEGER,"
+                + "sender_id INTEGER NOT NULL,"
+                + "receiver_id INTEGER NOT NULL,"
                 + COLUMN_CONTENT + " TEXT,"
-                + COLUMN_IS_USER + " INTEGER,"
                 + COLUMN_TIMESTAMP + " DATETIME DEFAULT CURRENT_TIMESTAMP,"
-                + "FOREIGN KEY(" + COLUMN_USER_ID + ") REFERENCES " + TABLE_USERS + "(" + COLUMN_USER_ID + "))");
+                + "FOREIGN KEY(sender_id) REFERENCES " + TABLE_USERS + "(user_id),"
+                + "FOREIGN KEY(receiver_id) REFERENCES " + TABLE_USERS + "(user_id))");
 
         db.execSQL("CREATE TABLE " + TABLE_HIRING_REQUESTS + "("
                 + "request_id INTEGER PRIMARY KEY AUTOINCREMENT,"
@@ -255,33 +256,39 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return count;
     }
 
-    public void addMessage(int userId, int sitterId, String content, boolean isUser) {
+    // Replace old method with:
+    public void addMessage(int senderId, int receiverId, String content) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put(COLUMN_USER_ID, userId);
-        values.put(COLUMN_SITTER_ID, sitterId);
+        values.put("sender_id", senderId);
+        values.put("receiver_id", receiverId);
         values.put(COLUMN_CONTENT, content);
-        values.put(COLUMN_IS_USER, isUser ? 1 : 0);
         db.insert(TABLE_MESSAGES, null, values);
         db.close();
     }
 
-    public List<Message> getMessages(int userId, int sitterId) {
+    public List<Message> getConversation(int userA, int userB) {
         List<Message> messages = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
+
         Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_MESSAGES +
-                        " WHERE " + COLUMN_USER_ID + " = ? AND " + COLUMN_SITTER_ID + " = ?" +
+                        " WHERE (sender_id = ? AND receiver_id = ?)" +
+                        " OR (sender_id = ? AND receiver_id = ?)" +
                         " ORDER BY " + COLUMN_TIMESTAMP + " ASC",
-                new String[]{String.valueOf(userId), String.valueOf(sitterId)});
+                new String[]{
+                        String.valueOf(userA),
+                        String.valueOf(userB),
+                        String.valueOf(userB),
+                        String.valueOf(userA)
+                });
 
         if (cursor.moveToFirst()) {
             do {
                 Message message = new Message(
                         cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_MESSAGE_ID)),
-                        cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_USER_ID)),
-                        cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_SITTER_ID)),
+                        cursor.getInt(cursor.getColumnIndexOrThrow("sender_id")),
+                        cursor.getInt(cursor.getColumnIndexOrThrow("receiver_id")),
                         cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_CONTENT)),
-                        cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_IS_USER)) == 1,
                         cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_TIMESTAMP))
                 );
                 messages.add(message);

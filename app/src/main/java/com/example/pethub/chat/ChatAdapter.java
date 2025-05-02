@@ -14,11 +14,12 @@ import java.util.List;
 
 public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MessageViewHolder> {
     private final List<Message> messages;
+    private final int currentUserId; // Add this field
 
-    public ChatAdapter(List<Message> messages) {
+    public ChatAdapter(List<Message> messages, int currentUserId) {
         this.messages = messages;
+        this.currentUserId = currentUserId;
     }
-
     @NonNull
     @Override
     public MessageViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -34,11 +35,14 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MessageViewHol
         holder.tvTimestamp.setText(message.getTimestamp());
 
         ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) holder.tvMessage.getLayoutParams();
-        if(message.isUser()) {
+        boolean isCurrentUser = message.getSenderId() == currentUserId;
+        if(isCurrentUser) {
+            // Right-align user messages
             holder.tvMessage.setBackgroundResource(R.drawable.user_message_bg);
             params.endToEnd = ConstraintLayout.LayoutParams.PARENT_ID;
             params.startToStart = ConstraintLayout.LayoutParams.UNSET;
         } else {
+            // Left-align partner messages
             holder.tvMessage.setBackgroundResource(R.drawable.sitter_message_bg);
             params.startToStart = ConstraintLayout.LayoutParams.PARENT_ID;
             params.endToEnd = ConstraintLayout.LayoutParams.UNSET;
