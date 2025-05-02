@@ -2,22 +2,21 @@ package com.example.pethub.sitter;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.pethub.database.DatabaseHelper;
 import com.example.pethub.databinding.ActivitySitterMainBinding;
+import java.io.File;
 import java.text.DecimalFormat;
 
 public class SitterMainActivity extends AppCompatActivity {
 
-    private static final String TAG = "SitterMainActivity";
-    private static final int REQUEST_CODE_EDIT = 1;
     private ActivitySitterMainBinding binding;
     private DatabaseHelper dbHelper;
     private int userId;
-    private DecimalFormat decimalFormat = new DecimalFormat("0.00");
+    private DecimalFormat decimalFormat = new DecimalFormat("0.00"); // Fixed pattern for leading zero
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,10 +24,7 @@ public class SitterMainActivity extends AppCompatActivity {
         binding = ActivitySitterMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        // Initialize database
         dbHelper = new DatabaseHelper(this);
-
-        // Get user ID from Intent
         userId = getIntent().getIntExtra("USER_ID", -1);
         if (userId == -1) {
             Toast.makeText(this, "User ID not found", Toast.LENGTH_SHORT).show();
@@ -36,86 +32,46 @@ public class SitterMainActivity extends AppCompatActivity {
             return;
         }
 
-        // Load sitter details
-        loadSitterDetails();
+        if (!dbHelper.isUserSitter(userId)) {
+            Toast.makeText(this, "User is not a sitter", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
 
-        // Edit button listener
+        loadSitterDetails();
         binding.buttonEdit.setOnClickListener(v -> {
-            Intent intent = new Intent(SitterMainActivity.this, SitterEditActivity.class);
+            Intent intent = new Intent(this, SitterEditActivity.class);
             intent.putExtra("USER_ID", userId);
-            startActivityForResult(intent, REQUEST_CODE_EDIT);
+            startActivity(intent);
         });
     }
 
     private void loadSitterDetails() {
         Cursor cursor = dbHelper.getSitterDetails(userId);
         if (cursor.moveToFirst()) {
-            int nameIndex = cursor.getColumnIndex("username");
-            int studentIdIndex = cursor.getColumnIndex("student_id");
-            int emailIndex = cursor.getColumnIndex("email");
-            int phoneIndex = cursor.getColumnIndex("phone_number");
-            int bioIndex = cursor.getColumnIndex("bio");
-            int carePetsIndex = cursor.getColumnIndex("care_pets");
-            int carePlantsIndex = cursor.getColumnIndex("care_plants");
-            int petRateIndex = cursor.getColumnIndex("pet_rate");
-            int plantRateIndex = cursor.getColumnIndex("plant_rate");
-            int incomeIndex = cursor.getColumnIndex("income");
-
-            if (nameIndex < 0 || studentIdIndex < 0 || emailIndex < 0 || phoneIndex < 0 || bioIndex < 0 ||
-                    carePetsIndex < 0 || carePlantsIndex < 0 || petRateIndex < 0 || plantRateIndex < 0 || incomeIndex < 0) {
-                Toast.makeText(this, "Error: Missing columns in query result", Toast.LENGTH_SHORT).show();
-                cursor.close();
-                finish();
-                return;
+            binding.textviewName.setText(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_USERNAME)));
+            binding.textviewStudentId.setText(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_STUDENT_ID)));
+            binding.textviewEmail.setText(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_EMAIL)));
+            binding.textviewPhone.setText(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_PHONE_NUMBER)));
+            String photoFilename = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_PHOTO_URI));
+            if (photoFilename != null) {
+                File imageFile = new File(new File(getFilesDir(), "profilepic"), photoFilename);
+                if (imageFile.exists()) {
+                    binding.imageviewProfile.setImageURI(Uri.fromFile(imageFile));
+                }
             }
-
-            String username = cursor.getString(nameIndex);
-            String studentId = cursor.getString(studentIdIndex);
-            String email = cursor.getString(emailIndex);
-            String phone = cursor.getString(phoneIndex);
-            String bio = cursor.getString(bioIndex);
-            boolean carePets = cursor.getInt(carePetsIndex) == 1;
-            boolean carePlants = cursor.getInt(carePlantsIndex) == 1;
-            double petRate = cursor.getDouble(petRateIndex);
-            double plantRate = cursor.getDouble(plantRateIndex);
-            double income = cursor.getDouble(incomeIndex);
-
-            // Set views
-            binding.textviewName.setText(username);
-            binding.textviewStudentId.setText(studentId);
-            binding.textviewEmail.setText(email);
-            binding.textviewPhone.setText(phone);
-            binding.textviewSitterBio.setText(bio);
-            binding.checkboxPets.setChecked(carePets);
-            binding.checkboxPlants.setChecked(carePlants);
-            binding.textviewPetRate.setText(decimalFormat.format(carePets ? petRate : 0) + " RM/day");
-            binding.textviewPlantRate.setText(decimalFormat.format(carePlants ? plantRate : 0) + " RM/day");
+            binding.textviewSitterBio.setText(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_BIO)));
+            binding.checkboxPets.setChecked(cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_CARE_PETS)) == 1);
+            binding.checkboxPlants.setChecked(cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_CARE_PLANTS)) == 1);
+            double petRate = cursor.getDouble(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_PET_RATE));
+            double plantRate = cursor.getDouble(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_PLANT_RATE));
+            double income = cursor.getDouble(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_INCOME));
+            binding.textviewPetRate.setText(decimalFormat.format(petRate) + " RM/day");
+            binding.textviewPlantRate.setText(decimalFormat.format(plantRate) + " RM/day");
             binding.textviewIncomeValue.setText("RM " + decimalFormat.format(income));
-
-            Log.d(TAG, "Loaded Name: " + username);
-            Log.d(TAG, "Loaded Student ID: " + studentId);
-            Log.d(TAG, "Loaded Email: " + email);
-            Log.d(TAG, "Loaded Phone: " + phone);
-            Log.d(TAG, "Loaded Bio: " + bio);
-            Log.d(TAG, "Loaded Care Pets: " + carePets);
-            Log.d(TAG, "Loaded Care Plants: " + carePlants);
-            Log.d(TAG, "Loaded Pet Rate: " + petRate);
-            Log.d(TAG, "Loaded Plant Rate: " + plantRate);
-            Log.d(TAG, "Loaded Income: " + income);
         } else {
-            Toast.makeText(this, "Sitter details not found", Toast.LENGTH_SHORT).show();
-            finish();
+            Toast.makeText(this, "Failed to load sitter details", Toast.LENGTH_SHORT).show();
         }
         cursor.close();
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_CODE_EDIT && resultCode == RESULT_OK) {
-            // Reload sitter details after editing
-            loadSitterDetails();
-            Toast.makeText(this, "Profile updated successfully!", Toast.LENGTH_SHORT).show();
-        }
     }
 }

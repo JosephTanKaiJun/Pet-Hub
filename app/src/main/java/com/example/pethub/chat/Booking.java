@@ -11,8 +11,9 @@ public class Booking {
     private String remarks;
     private String status;
     private String timestamp;
-    private int photoResId;
-    public Booking(int requestId, int userId, int sitterId, String sitterName, String date, String petType, String species, String remarks, String status, String timestamp, int photoResId) {
+    //private int photoResId;
+    private String photoUri;
+    public Booking(int requestId, int userId, int sitterId, String sitterName, String date, String petType, String species, String remarks, String status, String timestamp, String photoUri) {
         this.requestId = requestId;
         this.userId = userId;
         this.sitterId = sitterId;
@@ -23,7 +24,8 @@ public class Booking {
         this.remarks = remarks;
         this.status = status;
         this.timestamp = timestamp;
-        this.photoResId = photoResId;
+        //this.photoResId = photoResId;
+        this.photoUri = photoUri;
     }
 
     public int getRequestId() { return requestId; }
@@ -36,6 +38,9 @@ public class Booking {
     public String getRemarks() { return remarks; }
     public String getStatus() { return status; }
     public String getTimestamp() { return timestamp; }
-    public int getPhotoResId() { return photoResId; }
+    //public int getPhotoResId() { return photoResId; }
+    public String getPhotoUri() {
+        return photoUri;
+    }
 
 }

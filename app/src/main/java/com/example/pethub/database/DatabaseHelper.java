@@ -1,22 +1,20 @@
 package com.example.pethub.database;
 
-import com.example.pethub.chat.Booking;
-
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import java.util.ArrayList;
-import java.util.List;
+import com.example.pethub.chat.Booking;
 import com.example.pethub.chat.Message;
 import com.example.pethub.chat.Sitter;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "PetHub.db";
-    private static final int DATABASE_VERSION = 14; // Incremented due to schema change
+    private static final int DATABASE_VERSION = 16; // Incremented from 15
 
     // Users table
     public static final String TABLE_USERS = "users";
@@ -27,16 +25,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COLUMN_EMAIL = "email";
     public static final String COLUMN_IS_SITTER = "is_sitter";
     public static final String COLUMN_PHONE_NUMBER = "phone_number";
+    public static final String COLUMN_PHOTO_URI = "PHOTO_URI";
 
     // Sitters table
     private static final String TABLE_SITTERS = "sitters";
-    private static final String COLUMN_BIO = "bio";
-    private static final String COLUMN_CARE_PETS = "care_pets";
-    private static final String COLUMN_CARE_PLANTS = "care_plants";
-    private static final String COLUMN_PET_RATE = "pet_rate";
-    private static final String COLUMN_PLANT_RATE = "plant_rate";
-    private static final String COLUMN_INCOME = "income";
-    private static final String COLUMN_SKILLS = "skills";
+    public static final String COLUMN_BIO = "bio";
+    public static final String COLUMN_CARE_PETS = "care_pets";
+    public static final String COLUMN_CARE_PLANTS = "care_plants";
+    public static final String COLUMN_PET_RATE = "pet_rate";
+    public static final String COLUMN_PLANT_RATE = "plant_rate";
+    public static final String COLUMN_INCOME = "income";
+    public static final String COLUMN_SKILLS = "skills";
 
     // Messages table
     private static final String TABLE_MESSAGES = "messages";
@@ -61,16 +60,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-
-        // Updated users table
         String CREATE_USERS_TABLE = "CREATE TABLE " + TABLE_USERS + "("
                 + COLUMN_USER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-                + "username TEXT UNIQUE," // Changed from COLUMN_USERNAME
+                + COLUMN_USERNAME + " TEXT UNIQUE,"
                 + COLUMN_STUDENT_ID + " TEXT,"
                 + COLUMN_EMAIL + " TEXT UNIQUE,"
-                + "password TEXT," // Added password column
+                + COLUMN_PASSWORD + " TEXT,"
                 + COLUMN_PHONE_NUMBER + " TEXT,"
-                + "PHOTO_RES_ID INTEGER,"
+                + COLUMN_PHOTO_URI + " TEXT,"
                 + COLUMN_IS_SITTER + " INTEGER DEFAULT 0" + ")";
         db.execSQL(CREATE_USERS_TABLE);
 
@@ -96,7 +93,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         db.execSQL("CREATE TABLE " + TABLE_MESSAGES + "("
                 + COLUMN_MESSAGE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-                + COLUMN_USER_ID + " INTEGER," // Add this line to define the user_id column
+                + COLUMN_USER_ID + " INTEGER,"
                 + COLUMN_SITTER_ID + " INTEGER,"
                 + COLUMN_CONTENT + " TEXT,"
                 + COLUMN_IS_USER + " INTEGER,"
@@ -105,7 +102,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         db.execSQL("CREATE TABLE " + TABLE_HIRING_REQUESTS + "("
                 + "request_id INTEGER PRIMARY KEY AUTOINCREMENT,"
-                + COLUMN_USER_ID + " INTEGER," // Add user_id column
+                + COLUMN_USER_ID + " INTEGER,"
                 + "sitter_id INTEGER,"
                 + "date TEXT,"
                 + "pet_type TEXT,"
@@ -127,15 +124,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-            db.execSQL("DROP TABLE IF EXISTS " + TABLE_MESSAGES);
-            db.execSQL("DROP TABLE IF EXISTS " + TABLE_HIRING_REQUESTS);
-            db.execSQL("DROP TABLE IF EXISTS " + TABLE_USERS);
-            db.execSQL("DROP TABLE IF EXISTS " + TABLE_SITTERS);
-            db.execSQL("DROP TABLE IF EXISTS " + TABLE_OWNERS);
-            onCreate(db);
+        // Drop all tables and recreate them
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_MESSAGES);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_HIRING_REQUESTS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_SITTERS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_OWNERS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_USERS);
+        onCreate(db);
     }
 
-    // ------------------- SITTER METHODS -------------------
     public void addSitter(int userId, String bio, boolean carePets, boolean carePlants, double petRate, double plantRate, String skills) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -188,7 +185,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public Cursor getSitterDetails(int userId) {
         SQLiteDatabase db = this.getReadableDatabase();
         return db.rawQuery(
-                "SELECT u." + COLUMN_USERNAME + ", u." + COLUMN_STUDENT_ID + ", u." + COLUMN_EMAIL + ", u." + COLUMN_PHONE_NUMBER + ", u.PHOTO_RES_ID, " +
+                "SELECT u." + COLUMN_USERNAME + ", u." + COLUMN_STUDENT_ID + ", u." + COLUMN_EMAIL + ", u." + COLUMN_PHONE_NUMBER + ", u." + COLUMN_PHOTO_URI + ", " +
                         "s." + COLUMN_BIO + ", s." + COLUMN_CARE_PETS + ", s." + COLUMN_CARE_PLANTS + ", s." + COLUMN_PET_RATE + ", s." + COLUMN_PLANT_RATE +
                         ", s." + COLUMN_INCOME + ", s." + COLUMN_SKILLS +
                         " FROM " + TABLE_USERS + " u" +
@@ -197,10 +194,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 new String[]{String.valueOf(userId)}
         );
     }
+
     public Sitter getSitterById(int sitterId) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(
-                "SELECT u." + COLUMN_USERNAME + ", s." + COLUMN_BIO + ", s." + COLUMN_SKILLS + ", u." + COLUMN_EMAIL + ", u.PHOTO_RES_ID " +
+                "SELECT u." + COLUMN_USERNAME + ", s." + COLUMN_BIO + ", s." + COLUMN_SKILLS + ", u." + COLUMN_EMAIL + ", u." + COLUMN_PHOTO_URI + " " +
                         "FROM " + TABLE_USERS + " u " +
                         "JOIN " + TABLE_SITTERS + " s ON u." + COLUMN_USER_ID + " = s." + COLUMN_USER_ID + " " +
                         "WHERE u." + COLUMN_USER_ID + " = ?",
@@ -215,28 +213,27 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     cursor.getString(1),  // bio
                     cursor.getString(2),  // skills
                     cursor.getString(3),  // email
-                    cursor.getInt(4)      // photoResId
+                    cursor.getString(4)   // photoUri
             );
         }
         cursor.close();
         db.close();
         return sitter;
     }
+
     public void updateSitterDetails(int userId, String username, String studentId, String email, String phoneNumber,
-                                    int photoResId, String bio, boolean carePets, boolean carePlants,
+                                    String photoUri, String bio, boolean carePets, boolean carePlants,
                                     double petRate, double plantRate, String skills) {
         SQLiteDatabase db = this.getWritableDatabase();
 
-        // Update user table
         ContentValues userValues = new ContentValues();
         userValues.put(COLUMN_USERNAME, username);
         userValues.put(COLUMN_STUDENT_ID, studentId);
         userValues.put(COLUMN_EMAIL, email);
         userValues.put(COLUMN_PHONE_NUMBER, phoneNumber);
-        userValues.put("PHOTO_RES_ID", photoResId); // assuming this is the exact column name
+        userValues.put(COLUMN_PHOTO_URI, photoUri);
         db.update(TABLE_USERS, userValues, COLUMN_USER_ID + "=?", new String[]{String.valueOf(userId)});
 
-        // Update sitter table
         ContentValues sitterValues = new ContentValues();
         sitterValues.put(COLUMN_BIO, bio);
         sitterValues.put(COLUMN_CARE_PETS, carePets ? 1 : 0);
@@ -258,7 +255,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return count;
     }
 
-    // Message functions
     public void addMessage(int userId, int sitterId, String content, boolean isUser) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -312,9 +308,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public List<Booking> getBookingsForUser(int userId) {
         List<Booking> bookings = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
-        // Update query to include PHOTO_RES_ID
         Cursor cursor = db.rawQuery(
-                    "SELECT hr.*, u.username as sitter_name, u.PHOTO_RES_ID as photoResId FROM " + TABLE_HIRING_REQUESTS + " hr " +
+                "SELECT hr.*, u.username as sitter_name, u." + COLUMN_PHOTO_URI + " as photoUri FROM " + TABLE_HIRING_REQUESTS + " hr " +
                         "JOIN " + TABLE_USERS + " u ON hr.sitter_id = u.user_id " +
                         "WHERE hr.user_id = ? " +
                         "ORDER BY hr.date ASC",
@@ -322,9 +317,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         if (cursor.moveToFirst()) {
             do {
-                // Extract photoResId from cursor
-                int photoResId = cursor.getInt(cursor.getColumnIndexOrThrow("photoResId"));
-                // Pass photoResId to Booking constructor
                 Booking booking = new Booking(
                         cursor.getInt(cursor.getColumnIndexOrThrow("request_id")),
                         cursor.getInt(cursor.getColumnIndexOrThrow("user_id")),
@@ -336,7 +328,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         cursor.getString(cursor.getColumnIndexOrThrow("remarks")),
                         cursor.getString(cursor.getColumnIndexOrThrow("status")),
                         cursor.getString(cursor.getColumnIndexOrThrow("timestamp")),
-                        photoResId // Add this line
+                        cursor.getString(cursor.getColumnIndexOrThrow("photoUri"))
                 );
                 bookings.add(booking);
             } while (cursor.moveToNext());
@@ -357,8 +349,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
         return count > 0;
     }
-
-    // ------------------- OWNER METHODS -------------------
 
     public void addOwner(int userId, String bio, boolean carePets, boolean carePlants) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -416,10 +406,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(COLUMN_USERNAME, username);
         values.put(COLUMN_EMAIL, email);
         values.put(COLUMN_PASSWORD, password);
-
         long result = db.insert(TABLE_USERS, null, values);
         return result != -1;
     }
+
     public boolean checkCredentials(String username, String password) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_USERS + " WHERE username = ? AND password = ?",
@@ -428,6 +418,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cursor.close();
         return valid;
     }
+
     public boolean checkUser(String username) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_USERS + " WHERE username = ?",
@@ -436,7 +427,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cursor.close();
         return exists;
     }
-    // Get user ID
+
     public int getUserId(String username) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery("SELECT user_id FROM " + TABLE_USERS + " WHERE username = ?",
@@ -449,5 +440,3 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return userId;
     }
 }
-
-

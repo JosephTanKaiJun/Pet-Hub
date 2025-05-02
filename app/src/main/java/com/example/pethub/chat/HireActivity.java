@@ -1,6 +1,7 @@
 package com.example.pethub.chat;
 
 import android.app.DatePickerDialog;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -17,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.bumptech.glide.Glide;
 import com.example.pethub.R;
 import com.example.pethub.database.DatabaseHelper;
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
@@ -59,11 +61,25 @@ public class HireActivity extends AppCompatActivity {
         TextView tvSitterSkills = findViewById(R.id.tvSitterSkills);
         TextView tvSitterEmail = findViewById(R.id.tvSitterEmail);
 
-        Glide.with(this).load(sitter.getPhotoResId()).placeholder(R.drawable.default_avatar).into(ivSitterPhoto);
+        String photoUri = sitter.getPhotoUri();
+        if (photoUri != null) {
+            File imageFile = new File(new File(getFilesDir(), "profilepic"), photoUri);
+            if (imageFile.exists()) {
+                Glide.with(this)
+                        .load(Uri.fromFile(imageFile))
+                        .placeholder(R.drawable.default_avatar)
+                        .into(ivSitterPhoto);
+            } else {
+                Glide.with(this)
+                        .load(R.drawable.default_avatar)
+                        .into(ivSitterPhoto);
+            }
+        } else {
+            Glide.with(this)
+                    .load(R.drawable.default_avatar)
+                    .into(ivSitterPhoto);
+        }
         tvSitterName.setText(sitter.getName());
-        tvSitterBio.setText(sitter.getBio());
-        tvSitterSkills.setText(sitter.getSkills());
-        tvSitterEmail.setText(sitter.getEmail());        tvSitterName.setText(sitter.getName());
         tvSitterBio.setText(sitter.getBio());
         tvSitterSkills.setText(sitter.getSkills());
         tvSitterEmail.setText(sitter.getEmail());

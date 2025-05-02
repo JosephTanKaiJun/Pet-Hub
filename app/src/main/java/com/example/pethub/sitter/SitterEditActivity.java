@@ -1,12 +1,20 @@
 package com.example.pethub.sitter;
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.pethub.database.DatabaseHelper;
 import com.example.pethub.databinding.ActivitySitterEditBinding;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.DecimalFormat;
 
 public class SitterEditActivity extends AppCompatActivity {
@@ -14,7 +22,9 @@ public class SitterEditActivity extends AppCompatActivity {
     private ActivitySitterEditBinding binding;
     private DatabaseHelper dbHelper;
     private int userId;
-    private DecimalFormat decimalFormat = new DecimalFormat("0.00");
+    private DecimalFormat decimalFormat = new DecimalFormat("0.00"); // Fixed pattern for leading zero
+    private static final int PICK_IMAGE_REQUEST = 100;
+    private String profilePictureFilename;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,10 +32,7 @@ public class SitterEditActivity extends AppCompatActivity {
         binding = ActivitySitterEditBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        // Initialize database
         dbHelper = new DatabaseHelper(this);
-
-        // Get user ID from Intent
         userId = getIntent().getIntExtra("USER_ID", -1);
         if (userId == -1) {
             Toast.makeText(this, "User ID not found", Toast.LENGTH_SHORT).show();
@@ -33,143 +40,133 @@ public class SitterEditActivity extends AppCompatActivity {
             return;
         }
 
-        // Load sitter details into editable fields
         loadSitterDetails();
-
-        // Save button listener
+        binding.buttonUploadProfile.setOnClickListener(v -> openImagePicker());
         binding.buttonSave.setOnClickListener(v -> saveChanges());
     }
 
     private void loadSitterDetails() {
         Cursor cursor = dbHelper.getSitterDetails(userId);
         if (cursor.moveToFirst()) {
-            int nameIndex = cursor.getColumnIndex("username");
-            int studentIdIndex = cursor.getColumnIndex("student_id");
-            int emailIndex = cursor.getColumnIndex("email");
-            int phoneIndex = cursor.getColumnIndex("phone_number");
-            int bioIndex = cursor.getColumnIndex("bio");
-            int carePetsIndex = cursor.getColumnIndex("care_pets");
-            int carePlantsIndex = cursor.getColumnIndex("care_plants");
-            int petRateIndex = cursor.getColumnIndex("pet_rate");
-            int plantRateIndex = cursor.getColumnIndex("plant_rate");
-
-            if (nameIndex < 0 || studentIdIndex < 0 || emailIndex < 0 || phoneIndex < 0 || bioIndex < 0 ||
-                    carePetsIndex < 0 || carePlantsIndex < 0 || petRateIndex < 0 || plantRateIndex < 0) {
-                Toast.makeText(this, "Error: Missing columns in query result", Toast.LENGTH_SHORT).show();
-                cursor.close();
-                finish();
-                return;
+            binding.edittextName.setText(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_USERNAME)));
+            binding.edittextStudentId.setText(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_STUDENT_ID)));
+            binding.edittextEmail.setText(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_EMAIL)));
+            binding.edittextPhone.setText(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_PHONE_NUMBER)));
+            profilePictureFilename = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_PHOTO_URI));
+            if (profilePictureFilename != null) {
+                File imageFile = new File(new File(getFilesDir(), "profilepic"), profilePictureFilename);
+                if (imageFile.exists()) {
+                    binding.imageviewProfilePreview.setImageURI(Uri.fromFile(imageFile));
+                }
             }
-
-            String username = cursor.getString(nameIndex);
-            String studentId = cursor.getString(studentIdIndex);
-            String email = cursor.getString(emailIndex);
-            String phone = cursor.getString(phoneIndex);
-            String bio = cursor.getString(bioIndex);
-            boolean carePets = cursor.getInt(carePetsIndex) == 1;
-            boolean carePlants = cursor.getInt(carePlantsIndex) == 1;
-            double petRate = cursor.getDouble(petRateIndex);
-            double plantRate = cursor.getDouble(plantRateIndex);
-
-            // Set editable fields
-            binding.edittextName.setText(username);
-            binding.edittextStudentId.setText(studentId);
-            binding.edittextEmail.setText(email);
-            binding.edittextPhone.setText(phone);
-            binding.edittextBio.setText(bio);
-            binding.editCheckboxPets.setChecked(carePets);
-            binding.editCheckboxPlants.setChecked(carePlants);
-            binding.edittextPetRate.setText(String.valueOf(petRate));
-            binding.edittextPlantRate.setText(String.valueOf(plantRate));
-        } else {
-            Toast.makeText(this, "Sitter details not found", Toast.LENGTH_SHORT).show();
-            finish();
+            binding.edittextBio.setText(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_BIO)));
+            binding.editCheckboxPets.setChecked(cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_CARE_PETS)) == 1);
+            binding.editCheckboxPlants.setChecked(cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_CARE_PLANTS)) == 1);
+            double petRate = cursor.getDouble(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_PET_RATE));
+            double plantRate = cursor.getDouble(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_PLANT_RATE));
+            binding.edittextPetRate.setText(petRate > 0 ? decimalFormat.format(petRate) : "");
+            binding.edittextPlantRate.setText(plantRate > 0 ? decimalFormat.format(plantRate) : "");
         }
         cursor.close();
     }
 
+    private void openImagePicker() {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("image/*");
+        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
+            Uri imageUri = data.getData();
+            try {
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
+                binding.imageviewProfilePreview.setImageBitmap(bitmap);
+                profilePictureFilename = saveImageToInternalStorage(bitmap);
+            } catch (IOException e) {
+                Toast.makeText(this, "Failed to load image", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    private String saveImageToInternalStorage(Bitmap bitmap) {
+        String filename = "user_" + userId + "_profile.jpg";
+        File directory = new File(getFilesDir(), "profilepic");
+        if (!directory.exists()) {
+            directory.mkdirs();
+        }
+        File file = new File(directory, filename);
+        try (FileOutputStream fos = new FileOutputStream(file)) {
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+            return filename;
+        } catch (IOException e) {
+            Toast.makeText(this, "Failed to save image", Toast.LENGTH_SHORT).show();
+            return null;
+        }
+    }
+
     private void saveChanges() {
-        // Get values from editable fields
         String username = binding.edittextName.getText().toString().trim();
         String studentId = binding.edittextStudentId.getText().toString().trim();
         String email = binding.edittextEmail.getText().toString().trim();
-        String phone = binding.edittextPhone.getText().toString().trim();
+        String phoneNumber = binding.edittextPhone.getText().toString().trim();
         String bio = binding.edittextBio.getText().toString().trim();
         boolean carePets = binding.editCheckboxPets.isChecked();
         boolean carePlants = binding.editCheckboxPlants.isChecked();
         String petRateStr = binding.edittextPetRate.getText().toString().trim();
         String plantRateStr = binding.edittextPlantRate.getText().toString().trim();
+        String skills = "General pet care"; // Default skills as per previous implementation
 
-        // Validate inputs
-        if (username.isEmpty()) {
-            binding.edittextName.setError("Name is required");
+        if (username.isEmpty() || email.isEmpty() || phoneNumber.isEmpty()) {
+            Toast.makeText(this, "Please fill in all basic details", Toast.LENGTH_SHORT).show();
             return;
         }
-        if (studentId.isEmpty()) {
-            binding.edittextStudentId.setError("Student ID is required");
-            return;
-        }
-        if (email.isEmpty()) {
-            binding.edittextEmail.setError("Email is required");
-            return;
-        }
-        if (phone.isEmpty()) {
-            binding.edittextPhone.setError("Phone number is required");
-            return;
-        }
-        if (bio.isEmpty()) {
-            binding.edittextBio.setError("Bio is required");
-            return;
-        }
-
         if (!carePets && !carePlants) {
             Toast.makeText(this, "Please select at least one care option", Toast.LENGTH_SHORT).show();
             return;
         }
-
-        double petRate;
-        try {
-            petRate = carePets ? Double.parseDouble(petRateStr) : 0;
-            if (petRate < 0) throw new NumberFormatException();
-        } catch (NumberFormatException e) {
-            binding.edittextPetRate.setError("Invalid pet care rate");
+        if ((carePets && petRateStr.isEmpty()) || (carePlants && plantRateStr.isEmpty())) {
+            Toast.makeText(this, "Please enter rates for selected care options", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (bio.isEmpty()) {
+            Toast.makeText(this, "Please enter a bio", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        double plantRate;
-        try {
-            plantRate = carePlants ? Double.parseDouble(plantRateStr) : 0;
-            if (plantRate < 0) throw new NumberFormatException();
-        } catch (NumberFormatException e) {
-            binding.edittextPlantRate.setError("Invalid plant care rate");
+        double petRate = carePets ? parseRate(petRateStr) : 0;
+        double plantRate = carePlants ? parseRate(plantRateStr) : 0;
+
+        if ((carePets && petRate < 0) || (carePlants && plantRate < 0)) {
+            Toast.makeText(this, "Rates cannot be negative", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // Format rates
         petRate = Double.parseDouble(decimalFormat.format(petRate));
         plantRate = Double.parseDouble(decimalFormat.format(plantRate));
-        int photoResId = 0; // Get from UI or existing data
-        String skills = "General pet care"; // Get from UI
-        // Update database
+
         try {
             dbHelper.updateSitterDetails(
-                    userId,
-                    username,
-                    studentId,
-                    email,
-                    phone,
-                    photoResId, // Add photoResId
-                    bio,
-                    carePets,
-                    carePlants,
-                    petRate,
-                    plantRate,
-                    skills  // Add skills parameter
+                    userId, username, studentId, email, phoneNumber, profilePictureFilename,
+                    bio, carePets, carePlants, petRate, plantRate, skills
             );
-            setResult(RESULT_OK);
+            Toast.makeText(this, "Profile updated successfully!", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(this, SitterMainActivity.class);
+            intent.putExtra("USER_ID", userId);
+            startActivity(intent);
             finish();
         } catch (Exception e) {
             Toast.makeText(this, "Error updating profile", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private double parseRate(String rateStr) {
+        try {
+            return Double.parseDouble(rateStr);
+        } catch (NumberFormatException e) {
+            return -1;
         }
     }
 }

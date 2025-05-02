@@ -34,8 +34,6 @@ public class SelectionActivity extends AppCompatActivity implements SitterAdapte
             finish();
         }
 
-
-
         dbHelper = new DatabaseHelper(this);
         initializeUI();
         loadSitters();
@@ -56,12 +54,12 @@ public class SelectionActivity extends AppCompatActivity implements SitterAdapte
         if(cursor.moveToFirst()) {
             do {
                 sitters.add(new Sitter(
-                        cursor.getInt(0),
-                        cursor.getString(1),
-                        cursor.getString(2),
-                        cursor.getString(3),
-                        cursor.getString(4),
-                        cursor.getInt(5)
+                        cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_USER_ID)),
+                        cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_USERNAME)),
+                        cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_BIO)),
+                        cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_SKILLS)),
+                        cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_EMAIL)),
+                        cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_PHOTO_URI))
                 ));
             } while(cursor.moveToNext());
         }
@@ -82,9 +80,9 @@ public class SelectionActivity extends AppCompatActivity implements SitterAdapte
 
     private void addTestData() {
         // First create users
-        addTestUser("Alice Smith", "S123", "alice@example.com", R.drawable.user1);
-        addTestUser("Bob Johnson", "S456", "bob@example.com", R.drawable.user2);
-        addTestUser("Charlie Brown", "S789", "charlie@example.com", R.drawable.user3);
+        addTestUser("Alice Smith", "S123", "alice@example.com", "alice_profile.jpg");
+        addTestUser("Bob Johnson", "S456", "bob@example.com", "bob_profile.jpg");
+        addTestUser("Charlie Brown", "S789", "charlie@example.com", "charlie_profile.jpg");
 
         // Then add them as sitters
         addTestSitter(1, "Dog lover with 5 years experience", true, false, 25.0, 0.0, "Dogs, Walking");
@@ -94,13 +92,13 @@ public class SelectionActivity extends AppCompatActivity implements SitterAdapte
         loadSitters();
     }
 
-    private void addTestUser(String name, String studentId, String email, int photoResId) {
+    private void addTestUser(String name, String studentId, String email, String photoUri) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(DatabaseHelper.COLUMN_USERNAME, name);
         values.put(DatabaseHelper.COLUMN_STUDENT_ID, studentId);
         values.put(DatabaseHelper.COLUMN_EMAIL, email);
-        values.put("PHOTO_RES_ID", photoResId);
+        values.put(DatabaseHelper.COLUMN_PHOTO_URI, photoUri);
         values.put(DatabaseHelper.COLUMN_IS_SITTER, 1);
         db.insert(DatabaseHelper.TABLE_USERS, null, values);
         db.close();
@@ -110,8 +108,4 @@ public class SelectionActivity extends AppCompatActivity implements SitterAdapte
                                double petRate, double plantRate, String skills) {
         dbHelper.addSitter(userId, bio, carePets, carePlants, petRate, plantRate, skills);
     }
-
-
-
-
 }
