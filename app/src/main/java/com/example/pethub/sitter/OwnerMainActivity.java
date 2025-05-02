@@ -47,7 +47,7 @@ public class OwnerMainActivity extends AppCompatActivity {
     private void loadOwnerDetails() {
         Cursor cursor = dbHelper.getOwnerDetails(userId);
         if (cursor.moveToFirst()) {
-            int nameIndex = cursor.getColumnIndex("name");
+            int nameIndex = cursor.getColumnIndex("username");
             int studentIdIndex = cursor.getColumnIndex("student_id");
             int emailIndex = cursor.getColumnIndex("email");
             int phoneIndex = cursor.getColumnIndex("phone_number");
@@ -63,7 +63,7 @@ public class OwnerMainActivity extends AppCompatActivity {
                 return;
             }
 
-            String name = cursor.getString(nameIndex);
+            String username = cursor.getString(nameIndex);
             String studentId = cursor.getString(studentIdIndex);
             String email = cursor.getString(emailIndex);
             String phone = cursor.getString(phoneIndex);
@@ -71,7 +71,7 @@ public class OwnerMainActivity extends AppCompatActivity {
             boolean ownPets = cursor.getInt(ownsPetsIndex) == 1;
             boolean ownPlants = cursor.getInt(ownsPlantsIndex) == 1;
 
-            binding.textviewName.setText(name);
+            binding.textviewName.setText(username);
             binding.textviewStudentId.setText(studentId);
             binding.textviewEmail.setText(email);
             binding.textviewPhone.setText(phone);
@@ -79,7 +79,7 @@ public class OwnerMainActivity extends AppCompatActivity {
             binding.checkboxPets.setChecked(ownPets);
             binding.checkboxPlants.setChecked(ownPlants);
 
-            Log.d(TAG, "Loaded Name: " + name);
+            Log.d(TAG, "Loaded Name: " + username);
             Log.d(TAG, "Loaded Student ID: " + studentId);
             Log.d(TAG, "Loaded Email: " + email);
             Log.d(TAG, "Loaded Phone: " + phone);

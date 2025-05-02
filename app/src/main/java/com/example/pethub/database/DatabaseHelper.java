@@ -16,12 +16,13 @@ import com.example.pethub.chat.Sitter;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "PetHub.db";
-    private static final int DATABASE_VERSION = 12; // Incremented due to schema change
+    private static final int DATABASE_VERSION = 14; // Incremented due to schema change
 
     // Users table
     public static final String TABLE_USERS = "users";
     public static final String COLUMN_USER_ID = "user_id";
-    public static final String COLUMN_NAME = "name";
+    public static final String COLUMN_USERNAME = "username";
+    public static final String COLUMN_PASSWORD = "password";
     public static final String COLUMN_STUDENT_ID = "student_id";
     public static final String COLUMN_EMAIL = "email";
     public static final String COLUMN_IS_SITTER = "is_sitter";
@@ -61,11 +62,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
 
+        // Updated users table
         String CREATE_USERS_TABLE = "CREATE TABLE " + TABLE_USERS + "("
                 + COLUMN_USER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-                + COLUMN_NAME + " TEXT,"
+                + "username TEXT UNIQUE," // Changed from COLUMN_USERNAME
                 + COLUMN_STUDENT_ID + " TEXT,"
-                + COLUMN_EMAIL + " TEXT,"
+                + COLUMN_EMAIL + " TEXT UNIQUE,"
+                + "password TEXT," // Added password column
                 + COLUMN_PHONE_NUMBER + " TEXT,"
                 + "PHOTO_RES_ID INTEGER,"
                 + COLUMN_IS_SITTER + " INTEGER DEFAULT 0" + ")";
@@ -114,7 +117,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         ContentValues values = new ContentValues();
         values.put(COLUMN_USER_ID, 1);
-        values.put(COLUMN_NAME, "Test User");
+        values.put(COLUMN_USERNAME, "Test User");
         values.put(COLUMN_STUDENT_ID, "2105034");
         values.put(COLUMN_EMAIL, "test@example.com");
         values.put(COLUMN_PHONE_NUMBER, "0123456789");
@@ -185,7 +188,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public Cursor getSitterDetails(int userId) {
         SQLiteDatabase db = this.getReadableDatabase();
         return db.rawQuery(
-                "SELECT u." + COLUMN_NAME + ", u." + COLUMN_STUDENT_ID + ", u." + COLUMN_EMAIL + ", u." + COLUMN_PHONE_NUMBER + ", u.PHOTO_RES_ID, " +
+                "SELECT u." + COLUMN_USERNAME + ", u." + COLUMN_STUDENT_ID + ", u." + COLUMN_EMAIL + ", u." + COLUMN_PHONE_NUMBER + ", u.PHOTO_RES_ID, " +
                         "s." + COLUMN_BIO + ", s." + COLUMN_CARE_PETS + ", s." + COLUMN_CARE_PLANTS + ", s." + COLUMN_PET_RATE + ", s." + COLUMN_PLANT_RATE +
                         ", s." + COLUMN_INCOME + ", s." + COLUMN_SKILLS +
                         " FROM " + TABLE_USERS + " u" +
@@ -197,7 +200,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public Sitter getSitterById(int sitterId) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(
-                "SELECT u." + COLUMN_NAME + ", s." + COLUMN_BIO + ", s." + COLUMN_SKILLS + ", u." + COLUMN_EMAIL + ", u.PHOTO_RES_ID " +
+                "SELECT u." + COLUMN_USERNAME + ", s." + COLUMN_BIO + ", s." + COLUMN_SKILLS + ", u." + COLUMN_EMAIL + ", u.PHOTO_RES_ID " +
                         "FROM " + TABLE_USERS + " u " +
                         "JOIN " + TABLE_SITTERS + " s ON u." + COLUMN_USER_ID + " = s." + COLUMN_USER_ID + " " +
                         "WHERE u." + COLUMN_USER_ID + " = ?",
@@ -219,14 +222,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
         return sitter;
     }
-    public void updateSitterDetails(int userId, String name, String studentId, String email, String phoneNumber,
+    public void updateSitterDetails(int userId, String username, String studentId, String email, String phoneNumber,
                                     int photoResId, String bio, boolean carePets, boolean carePlants,
                                     double petRate, double plantRate, String skills) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         // Update user table
         ContentValues userValues = new ContentValues();
-        userValues.put(COLUMN_NAME, name);
+        userValues.put(COLUMN_USERNAME, username);
         userValues.put(COLUMN_STUDENT_ID, studentId);
         userValues.put(COLUMN_EMAIL, email);
         userValues.put(COLUMN_PHONE_NUMBER, phoneNumber);
@@ -311,7 +314,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         // Update query to include PHOTO_RES_ID
         Cursor cursor = db.rawQuery(
-                    "SELECT hr.*, u.name as sitter_name, u.PHOTO_RES_ID as photoResId FROM " + TABLE_HIRING_REQUESTS + " hr " +
+                    "SELECT hr.*, u.username as sitter_name, u.PHOTO_RES_ID as photoResId FROM " + TABLE_HIRING_REQUESTS + " hr " +
                         "JOIN " + TABLE_USERS + " u ON hr.sitter_id = u.user_id " +
                         "WHERE hr.user_id = ? " +
                         "ORDER BY hr.date ASC",
@@ -379,7 +382,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public Cursor getOwnerDetails(int userId) {
         SQLiteDatabase db = this.getReadableDatabase();
         return db.rawQuery(
-                "SELECT u." + COLUMN_NAME + ", u." + COLUMN_STUDENT_ID + ", u." + COLUMN_EMAIL + ", u." + COLUMN_PHONE_NUMBER +
+                "SELECT u." + COLUMN_USERNAME + ", u." + COLUMN_STUDENT_ID + ", u." + COLUMN_EMAIL + ", u." + COLUMN_PHONE_NUMBER +
                         ", o." + COLUMN_OWNER_BIO + ", o." + COLUMN_OWNER_CARE_PETS + ", o." + COLUMN_OWNER_CARE_PLANTS +
                         " FROM " + TABLE_USERS + " u" +
                         " JOIN " + TABLE_OWNERS + " o ON u." + COLUMN_USER_ID + " = o." + COLUMN_USER_ID +
@@ -387,12 +390,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 new String[]{String.valueOf(userId)});
     }
 
-    public void updateOwnerDetails(int userId, String name, String studentId, String email, String phoneNumber,
+    public void updateOwnerDetails(int userId, String username, String studentId, String email, String phoneNumber,
                                    String bio, boolean carePets, boolean carePlants) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues userValues = new ContentValues();
-        userValues.put(COLUMN_NAME, name);
+        userValues.put(COLUMN_USERNAME, username);
         userValues.put(COLUMN_STUDENT_ID, studentId);
         userValues.put(COLUMN_EMAIL, email);
         userValues.put(COLUMN_PHONE_NUMBER, phoneNumber);
@@ -405,6 +408,45 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.update(TABLE_OWNERS, ownerValues, COLUMN_USER_ID + "=?", new String[]{String.valueOf(userId)});
 
         db.close();
+    }
+
+    public boolean insertUser(String username, String email, String password) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_USERNAME, username);
+        values.put(COLUMN_EMAIL, email);
+        values.put(COLUMN_PASSWORD, password);
+
+        long result = db.insert(TABLE_USERS, null, values);
+        return result != -1;
+    }
+    public boolean checkCredentials(String username, String password) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_USERS + " WHERE username = ? AND password = ?",
+                new String[]{username, password});
+        boolean valid = cursor.getCount() > 0;
+        cursor.close();
+        return valid;
+    }
+    public boolean checkUser(String username) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_USERS + " WHERE username = ?",
+                new String[]{username});
+        boolean exists = cursor.getCount() > 0;
+        cursor.close();
+        return exists;
+    }
+    // Get user ID
+    public int getUserId(String username) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT user_id FROM " + TABLE_USERS + " WHERE username = ?",
+                new String[]{username});
+        int userId = -1;
+        if (cursor.moveToFirst()) {
+            userId = cursor.getInt(0);
+        }
+        cursor.close();
+        return userId;
     }
 }
 

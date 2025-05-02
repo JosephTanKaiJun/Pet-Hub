@@ -97,7 +97,7 @@ public class SelectionActivity extends AppCompatActivity implements SitterAdapte
     private void addTestUser(String name, String studentId, String email, int photoResId) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put(DatabaseHelper.COLUMN_NAME, name);
+        values.put(DatabaseHelper.COLUMN_USERNAME, name);
         values.put(DatabaseHelper.COLUMN_STUDENT_ID, studentId);
         values.put(DatabaseHelper.COLUMN_EMAIL, email);
         values.put("PHOTO_RES_ID", photoResId);

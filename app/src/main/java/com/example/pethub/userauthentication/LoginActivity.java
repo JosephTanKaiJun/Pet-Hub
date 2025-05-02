@@ -7,18 +7,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.pethub.chat.SelectionActivity;
 import com.example.pethub.main.MainActivity;
 import com.example.pethub.databinding.ActivityLoginBinding;
-
+import com.example.pethub.database.DatabaseHelper;
 public class LoginActivity extends AppCompatActivity {
     private ActivityLoginBinding binding;
-    private AuthDatabaseHelper databaseHelper;
-
+    private DatabaseHelper databaseHelper;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        databaseHelper = new AuthDatabaseHelper(this);
+        databaseHelper = new DatabaseHelper(this);
         binding.signupRedirectText.setOnClickListener(v ->
                 startActivity(new Intent(LoginActivity.this, SignupActivity.class)));
         binding.loginButton.setOnClickListener(v -> {

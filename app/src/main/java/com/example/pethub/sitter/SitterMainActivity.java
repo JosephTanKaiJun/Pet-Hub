@@ -50,7 +50,7 @@ public class SitterMainActivity extends AppCompatActivity {
     private void loadSitterDetails() {
         Cursor cursor = dbHelper.getSitterDetails(userId);
         if (cursor.moveToFirst()) {
-            int nameIndex = cursor.getColumnIndex("name");
+            int nameIndex = cursor.getColumnIndex("username");
             int studentIdIndex = cursor.getColumnIndex("student_id");
             int emailIndex = cursor.getColumnIndex("email");
             int phoneIndex = cursor.getColumnIndex("phone_number");
@@ -69,7 +69,7 @@ public class SitterMainActivity extends AppCompatActivity {
                 return;
             }
 
-            String name = cursor.getString(nameIndex);
+            String username = cursor.getString(nameIndex);
             String studentId = cursor.getString(studentIdIndex);
             String email = cursor.getString(emailIndex);
             String phone = cursor.getString(phoneIndex);
@@ -81,7 +81,7 @@ public class SitterMainActivity extends AppCompatActivity {
             double income = cursor.getDouble(incomeIndex);
 
             // Set views
-            binding.textviewName.setText(name);
+            binding.textviewName.setText(username);
             binding.textviewStudentId.setText(studentId);
             binding.textviewEmail.setText(email);
             binding.textviewPhone.setText(phone);
@@ -92,7 +92,7 @@ public class SitterMainActivity extends AppCompatActivity {
             binding.textviewPlantRate.setText(decimalFormat.format(carePlants ? plantRate : 0) + " RM/day");
             binding.textviewIncomeValue.setText("RM " + decimalFormat.format(income));
 
-            Log.d(TAG, "Loaded Name: " + name);
+            Log.d(TAG, "Loaded Name: " + username);
             Log.d(TAG, "Loaded Student ID: " + studentId);
             Log.d(TAG, "Loaded Email: " + email);
             Log.d(TAG, "Loaded Phone: " + phone);

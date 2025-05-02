@@ -43,7 +43,7 @@ public class SitterEditActivity extends AppCompatActivity {
     private void loadSitterDetails() {
         Cursor cursor = dbHelper.getSitterDetails(userId);
         if (cursor.moveToFirst()) {
-            int nameIndex = cursor.getColumnIndex("name");
+            int nameIndex = cursor.getColumnIndex("username");
             int studentIdIndex = cursor.getColumnIndex("student_id");
             int emailIndex = cursor.getColumnIndex("email");
             int phoneIndex = cursor.getColumnIndex("phone_number");
@@ -61,7 +61,7 @@ public class SitterEditActivity extends AppCompatActivity {
                 return;
             }
 
-            String name = cursor.getString(nameIndex);
+            String username = cursor.getString(nameIndex);
             String studentId = cursor.getString(studentIdIndex);
             String email = cursor.getString(emailIndex);
             String phone = cursor.getString(phoneIndex);
@@ -72,7 +72,7 @@ public class SitterEditActivity extends AppCompatActivity {
             double plantRate = cursor.getDouble(plantRateIndex);
 
             // Set editable fields
-            binding.edittextName.setText(name);
+            binding.edittextName.setText(username);
             binding.edittextStudentId.setText(studentId);
             binding.edittextEmail.setText(email);
             binding.edittextPhone.setText(phone);
@@ -90,7 +90,7 @@ public class SitterEditActivity extends AppCompatActivity {
 
     private void saveChanges() {
         // Get values from editable fields
-        String name = binding.edittextName.getText().toString().trim();
+        String username = binding.edittextName.getText().toString().trim();
         String studentId = binding.edittextStudentId.getText().toString().trim();
         String email = binding.edittextEmail.getText().toString().trim();
         String phone = binding.edittextPhone.getText().toString().trim();
@@ -101,7 +101,7 @@ public class SitterEditActivity extends AppCompatActivity {
         String plantRateStr = binding.edittextPlantRate.getText().toString().trim();
 
         // Validate inputs
-        if (name.isEmpty()) {
+        if (username.isEmpty()) {
             binding.edittextName.setError("Name is required");
             return;
         }
@@ -154,7 +154,7 @@ public class SitterEditActivity extends AppCompatActivity {
         try {
             dbHelper.updateSitterDetails(
                     userId,
-                    name,
+                    username,
                     studentId,
                     email,
                     phone,

@@ -39,9 +39,17 @@
             android:label="Chat"/>
         <activity android:name=".chat.HireActivity" />
         <activity android:name=".chat.BookingActivity" />
-        <activity android:name=".sitter.SitterApplicationActivity" />
-        <activity android:name=".sitter.OwnerEditActivity"/>
-        <activity android:name=".sitter.OwnerMainActivity"/>
+        <activity
+            android:name=".sitter.SitterMainActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".sitter.SitterApplicationActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".sitter.SitterEditActivity"
+            android:exported="false" />
 
     </application>
 

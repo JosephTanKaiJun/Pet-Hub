@@ -5,10 +5,10 @@ import android.os.Bundle;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.pethub.databinding.ActivitySignupBinding;
-
+import com.example.pethub.database.DatabaseHelper;
 public class SignupActivity extends AppCompatActivity {
     private ActivitySignupBinding binding;
-    private AuthDatabaseHelper databaseHelper;
+    private DatabaseHelper databaseHelper; // Changed from AuthDatabaseHelper
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -16,7 +16,7 @@ public class SignupActivity extends AppCompatActivity {
         binding = ActivitySignupBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        databaseHelper = new AuthDatabaseHelper(this);
+        databaseHelper = new DatabaseHelper(this);
 
         binding.signupButton.setOnClickListener(v -> {
             String username = binding.signupUsername.getText().toString();
