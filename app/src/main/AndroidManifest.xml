@@ -51,6 +51,14 @@
             android:name=".sitter.SitterEditActivity"
             android:exported="false" />
 
+        <activity
+            android:name=".sitter.OwnerEditActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".sitter.OwnerMainActivity"
+            android:exported="false" />
+
     </application>
 
 </manifest>

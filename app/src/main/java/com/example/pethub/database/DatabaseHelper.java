@@ -5,6 +5,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
+
 import com.example.pethub.chat.Booking;
 import com.example.pethub.chat.Message;
 import com.example.pethub.chat.Sitter;
@@ -46,10 +48,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String COLUMN_TIMESTAMP = "timestamp";
 
     // Owners table
-    private static final String TABLE_OWNERS = "owners";
-    private static final String COLUMN_OWNER_BIO = "bio";
-    private static final String COLUMN_OWNER_CARE_PETS = "care_pets";
-    private static final String COLUMN_OWNER_CARE_PLANTS = "care_plants";
+    public static final String TABLE_OWNERS = "owners";
+    public static final String COLUMN_OWNER_BIO = "bio";
+    public static final String COLUMN_OWNER_CARE_PETS = "care_pets";
+    public static final String COLUMN_OWNER_CARE_PLANTS = "care_plants";
 
     // Hiring requests table
     private static final String TABLE_HIRING_REQUESTS = "hiring_requests";
@@ -350,8 +352,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return count > 0;
     }
 
-    public void addOwner(int userId, String bio, boolean carePets, boolean carePlants) {
+    ///Owner functions
+    public void addOwner(int userId, String bio, boolean carePets, boolean carePlants, String photoUri) {
         SQLiteDatabase db = this.getWritableDatabase();
+
+        // Update user's photo URI if provided
+        if (photoUri != null) {
+            ContentValues userValues = new ContentValues();
+            userValues.put(COLUMN_PHOTO_URI, photoUri);
+            db.update(TABLE_USERS, userValues, COLUMN_USER_ID + "=?", new String[]{String.valueOf(userId)});
+        }
+
         ContentValues values = new ContentValues();
         values.put(COLUMN_USER_ID, userId);
         values.put(COLUMN_OWNER_BIO, bio);
@@ -372,32 +383,83 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public Cursor getOwnerDetails(int userId) {
         SQLiteDatabase db = this.getReadableDatabase();
         return db.rawQuery(
-                "SELECT u." + COLUMN_USERNAME + ", u." + COLUMN_STUDENT_ID + ", u." + COLUMN_EMAIL + ", u." + COLUMN_PHONE_NUMBER +
-                        ", o." + COLUMN_OWNER_BIO + ", o." + COLUMN_OWNER_CARE_PETS + ", o." + COLUMN_OWNER_CARE_PLANTS +
+                "SELECT u." + COLUMN_USERNAME + ", u." + COLUMN_STUDENT_ID + ", u." + COLUMN_EMAIL +
+                        ", u." + COLUMN_PHONE_NUMBER + ", u." + COLUMN_PHOTO_URI +
+                        ", o." + COLUMN_OWNER_BIO + ", o." + COLUMN_OWNER_CARE_PETS +
+                        ", o." + COLUMN_OWNER_CARE_PLANTS +
                         " FROM " + TABLE_USERS + " u" +
-                        " JOIN " + TABLE_OWNERS + " o ON u." + COLUMN_USER_ID + " = o." + COLUMN_USER_ID +
+                        " LEFT JOIN " + TABLE_OWNERS + " o ON u." + COLUMN_USER_ID + " = o." + COLUMN_USER_ID +
                         " WHERE u." + COLUMN_USER_ID + " = ?",
-                new String[]{String.valueOf(userId)});
+                new String[]{String.valueOf(userId)}
+        );
     }
 
-    public void updateOwnerDetails(int userId, String username, String studentId, String email, String phoneNumber,
-                                   String bio, boolean carePets, boolean carePlants) {
+
+    public boolean updateOwnerDetails(int userId, String username, String studentId, String email,
+                                      String phoneNumber, String photoUri, String bio,
+                                      boolean carePets, boolean carePlants) {
         SQLiteDatabase db = this.getWritableDatabase();
+        db.beginTransaction();
+        boolean success = false;
 
-        ContentValues userValues = new ContentValues();
-        userValues.put(COLUMN_USERNAME, username);
-        userValues.put(COLUMN_STUDENT_ID, studentId);
-        userValues.put(COLUMN_EMAIL, email);
-        userValues.put(COLUMN_PHONE_NUMBER, phoneNumber);
-        db.update(TABLE_USERS, userValues, COLUMN_USER_ID + "=?", new String[]{String.valueOf(userId)});
+        try {
+            // Update user table
+            ContentValues userValues = new ContentValues();
+            userValues.put(COLUMN_USERNAME, username);
+            userValues.put(COLUMN_STUDENT_ID, studentId);
+            userValues.put(COLUMN_EMAIL, email);
+            userValues.put(COLUMN_PHONE_NUMBER, phoneNumber);
+            if (photoUri != null) {
+                userValues.put(COLUMN_PHOTO_URI, photoUri);
+            }
 
-        ContentValues ownerValues = new ContentValues();
-        ownerValues.put(COLUMN_OWNER_BIO, bio);
-        ownerValues.put(COLUMN_OWNER_CARE_PETS, carePets ? 1 : 0);
-        ownerValues.put(COLUMN_OWNER_CARE_PLANTS, carePlants ? 1 : 0);
-        db.update(TABLE_OWNERS, ownerValues, COLUMN_USER_ID + "=?", new String[]{String.valueOf(userId)});
+            int userRows = db.update(TABLE_USERS, userValues,
+                    COLUMN_USER_ID + "=?",
+                    new String[]{String.valueOf(userId)});
 
-        db.close();
+            if (userRows <= 0) {
+                throw new Exception("Failed to update user record");
+            }
+
+            // Update owner table
+            ContentValues ownerValues = new ContentValues();
+            ownerValues.put(COLUMN_OWNER_BIO, bio);
+            ownerValues.put(COLUMN_OWNER_CARE_PETS, carePets ? 1 : 0);
+            ownerValues.put(COLUMN_OWNER_CARE_PLANTS, carePlants ? 1 : 0);
+
+            // Check if owner record exists
+            Cursor cursor = db.query(TABLE_OWNERS,
+                    new String[]{COLUMN_USER_ID},
+                    COLUMN_USER_ID + "=?",
+                    new String[]{String.valueOf(userId)}, null, null, null);
+
+            if (cursor.moveToFirst()) {
+                // Update existing
+                int ownerRows = db.update(TABLE_OWNERS, ownerValues,
+                        COLUMN_USER_ID + "=?",
+                        new String[]{String.valueOf(userId)});
+                if (ownerRows <= 0) {
+                    throw new Exception("Failed to update owner record");
+                }
+            } else {
+                // Insert new
+                ownerValues.put(COLUMN_USER_ID, userId);
+                long result = db.insert(TABLE_OWNERS, null, ownerValues);
+                if (result == -1) {
+                    throw new Exception("Failed to insert owner record");
+                }
+            }
+            cursor.close();
+
+            db.setTransactionSuccessful();
+            success = true;
+        } catch (Exception e) {
+            Log.e("DatabaseHelper", "Error updating owner details", e);
+        } finally {
+            db.endTransaction();
+            db.close();
+        }
+        return success;
     }
 
     public boolean insertUser(String username, String email, String password) {

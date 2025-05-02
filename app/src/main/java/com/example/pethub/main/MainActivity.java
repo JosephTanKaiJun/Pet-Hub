@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.pethub.chat.SelectionActivity;
 import com.example.pethub.chat.BookingActivity;
 import com.example.pethub.R;
+import com.example.pethub.sitter.OwnerMainActivity;
 import com.example.pethub.userauthentication.AuthDatabaseHelper;
 import com.example.pethub.userauthentication.LoginActivity;
 import com.example.pethub.database.DatabaseHelper;
@@ -18,7 +19,7 @@ import com.example.pethub.sitter.SitterApplicationActivity;
 import com.example.pethub.sitter.SitterMainActivity;
 import com.example.pethub.database.DatabaseHelper;
 public class MainActivity extends AppCompatActivity {
-    private ImageButton searchSitterBtn, sitterSignupBtn, navChat;
+    private ImageButton searchSitterBtn, sitterSignupBtn, navChat, navProfile;
     private int userId = 1; // Hardcoded for testing; replace with actual user authentication logic;
     private TextView txtUsername;
     private AuthDatabaseHelper authDbHelper;
@@ -44,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
         searchSitterBtn = findViewById(R.id.searchSitterBtn);
         sitterSignupBtn = findViewById(R.id.sitterSignupBtn);
         navChat = findViewById(R.id.navChat);
+        navProfile = findViewById(R.id.navProfile);
 
         searchSitterBtn.setOnClickListener(v -> {
             Intent intent = new Intent(this, SelectionActivity.class);
@@ -54,12 +56,28 @@ public class MainActivity extends AppCompatActivity {
         sitterSignupBtn.setOnClickListener(v -> {
             Toast.makeText(this, "Sitter Sign Up clicked", Toast.LENGTH_SHORT).show();
             if (dbHelper.isUserSitter(userId)) {
+                Toast.makeText(this, "You are already a Sitter", Toast.LENGTH_SHORT).show();
+//                Intent intent = new Intent(this, SitterMainActivity.class);
+//                intent.putExtra("USER_ID", userId);
+//                startActivity(intent);
+//                finish();
+            } else {
+                Intent intent = new Intent(this, SitterApplicationActivity.class);
+                intent.putExtra("USER_ID", userId);
+                startActivity(intent);
+                finish();
+            }
+        });
+
+        navProfile.setOnClickListener(v -> {
+            Toast.makeText(this, "Profile clicked", Toast.LENGTH_SHORT).show();
+            if (dbHelper.isUserSitter(userId)) {
                 Intent intent = new Intent(this, SitterMainActivity.class);
                 intent.putExtra("USER_ID", userId);
                 startActivity(intent);
                 finish();
             } else {
-                Intent intent = new Intent(this, SitterApplicationActivity.class);
+                Intent intent = new Intent(this, OwnerMainActivity.class);
                 intent.putExtra("USER_ID", userId);
                 startActivity(intent);
                 finish();
