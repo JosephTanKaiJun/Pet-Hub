@@ -5,6 +5,11 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -22,7 +27,7 @@ public class SitterEditActivity extends AppCompatActivity {
     private ActivitySitterEditBinding binding;
     private DatabaseHelper dbHelper;
     private int userId;
-    private DecimalFormat decimalFormat = new DecimalFormat("0.00"); // Fixed pattern for leading zero
+    private DecimalFormat decimalFormat = new DecimalFormat("0.00");
     private static final int PICK_IMAGE_REQUEST = 100;
     private String profilePictureFilename;
 
@@ -83,12 +88,35 @@ public class SitterEditActivity extends AppCompatActivity {
             Uri imageUri = data.getData();
             try {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
-                binding.imageviewProfilePreview.setImageBitmap(bitmap);
-                profilePictureFilename = saveImageToInternalStorage(bitmap);
+                // Resize bitmap to match ImageView dimensions (120dp)
+                int targetSize = (int) (120 * getResources().getDisplayMetrics().density);
+                Bitmap resizedBitmap = Bitmap.createScaledBitmap(bitmap, targetSize, targetSize, true);
+                // Crop to circle
+                Bitmap circularBitmap = getCircularBitmap(resizedBitmap);
+                binding.imageviewProfilePreview.setImageBitmap(circularBitmap);
+                profilePictureFilename = saveImageToInternalStorage(circularBitmap);
             } catch (IOException e) {
                 Toast.makeText(this, "Failed to load image", Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    private Bitmap getCircularBitmap(Bitmap bitmap) {
+        int size = Math.min(bitmap.getWidth(), bitmap.getHeight());
+        Bitmap output = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(output);
+
+        final Paint paint = new Paint();
+        final Rect rect = new Rect(0, 0, size, size);
+
+        paint.setAntiAlias(true);
+        canvas.drawARGB(0, 0, 0, 0);
+        paint.setColor(0xFFFFFFFF);
+        canvas.drawCircle(size / 2f, size / 2f, size / 2f, paint);
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+        canvas.drawBitmap(bitmap, rect, rect, paint);
+
+        return output;
     }
 
     private String saveImageToInternalStorage(Bitmap bitmap) {
@@ -117,7 +145,7 @@ public class SitterEditActivity extends AppCompatActivity {
         boolean carePlants = binding.editCheckboxPlants.isChecked();
         String petRateStr = binding.edittextPetRate.getText().toString().trim();
         String plantRateStr = binding.edittextPlantRate.getText().toString().trim();
-        String skills = "General pet care"; // Default skills as per previous implementation
+        String skills = "General pet care";
 
         if (username.isEmpty() || email.isEmpty() || phoneNumber.isEmpty()) {
             Toast.makeText(this, "Please fill in all basic details", Toast.LENGTH_SHORT).show();

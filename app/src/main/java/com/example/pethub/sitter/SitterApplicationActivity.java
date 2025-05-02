@@ -4,6 +4,11 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -75,12 +80,32 @@ public class SitterApplicationActivity extends AppCompatActivity {
                 // Resize bitmap to match ImageView dimensions (120dp)
                 int targetSize = (int) (120 * getResources().getDisplayMetrics().density); // Convert dp to pixels
                 Bitmap resizedBitmap = Bitmap.createScaledBitmap(bitmap, targetSize, targetSize, true);
-                binding.imageviewProfilePreview.setImageBitmap(resizedBitmap);
-                profilePictureFilename = saveImageToInternalStorage(resizedBitmap);
+                // Crop to circle
+                Bitmap circularBitmap = getCircularBitmap(resizedBitmap);
+                binding.imageviewProfilePreview.setImageBitmap(circularBitmap);
+                profilePictureFilename = saveImageToInternalStorage(circularBitmap);
             } catch (IOException e) {
                 Toast.makeText(this, "Failed to load image", Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    private Bitmap getCircularBitmap(Bitmap bitmap) {
+        int size = Math.min(bitmap.getWidth(), bitmap.getHeight());
+        Bitmap output = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(output);
+
+        final Paint paint = new Paint();
+        final Rect rect = new Rect(0, 0, size, size);
+
+        paint.setAntiAlias(true);
+        canvas.drawARGB(0, 0, 0, 0);
+        paint.setColor(0xFFFFFFFF);
+        canvas.drawCircle(size / 2f, size / 2f, size / 2f, paint);
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+        canvas.drawBitmap(bitmap, rect, rect, paint);
+
+        return output;
     }
 
     private String saveImageToInternalStorage(Bitmap bitmap) {
