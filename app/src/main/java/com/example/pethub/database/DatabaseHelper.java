@@ -17,7 +17,7 @@ import java.util.List;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "PetHub.db";
-    private static final int DATABASE_VERSION = 16; // Incremented from 15
+    private static final int DATABASE_VERSION = 18; // Incremented from 15
 
     // Users table
     public static final String TABLE_USERS = "users";
@@ -146,14 +146,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + COLUMN_RATING_STARS + " INTEGER NOT NULL)";
         db.execSQL(CREATE_RATINGS_TABLE);
 
-        ContentValues values = new ContentValues();
-        values.put(COLUMN_USER_ID, 1);
-        values.put(COLUMN_USERNAME, "Test User");
-        values.put(COLUMN_STUDENT_ID, "2105034");
-        values.put(COLUMN_EMAIL, "test@example.com");
-        values.put(COLUMN_PHONE_NUMBER, "0123456789");
-        values.put(COLUMN_IS_SITTER, 0);
-        db.insert(TABLE_USERS, null, values);
     }
 
     public boolean addOrUpdateRating(String username, String sitterName, String details, int stars) {
@@ -248,12 +240,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // Drop all tables and recreate them
+        // Drop all tables
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_MESSAGES);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_HIRING_REQUESTS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_SITTERS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_OWNERS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_USERS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_COMMUNITY);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_RATINGS);
+
+        // Recreate tables
         onCreate(db);
     }
 

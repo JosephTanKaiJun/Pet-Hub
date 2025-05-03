@@ -126,7 +126,8 @@ public class OwnerEditActivity extends AppCompatActivity {
     }
 
     private String saveImageToInternalStorage(Bitmap bitmap) {
-        String filename = "user_" + userId + "_profile.jpg";
+        // Add timestamp to filename to make it unique
+        String filename = "user_" + userId + "_profile_" + System.currentTimeMillis() + ".jpg";
         File directory = new File(getFilesDir(), "profilepic");
         if (!directory.exists()) {
             directory.mkdirs();

@@ -39,9 +39,6 @@ public class SelectionActivity extends AppCompatActivity implements SitterAdapte
         dbHelper = new DatabaseHelper(this);
         initializeUI();
         loadSitters();
-        if (dbHelper.getSittersCount() == 0) {
-            addTestData();
-        }
     }
 
     private void initializeUI() {
@@ -78,20 +75,6 @@ public class SelectionActivity extends AppCompatActivity implements SitterAdapte
         intent.putExtra("SITTER_ID", sitter.getId());
         intent.putExtra("SITTER_NAME", sitter.getName());
         startActivity(intent);
-    }
-
-    private void addTestData() {
-        // First create users
-        addTestUser("Alice Smith", "S123", "alice@example.com", "alice_profile.jpg");
-        addTestUser("Bob Johnson", "S456", "bob@example.com", "bob_profile.jpg");
-        addTestUser("Charlie Brown", "S789", "charlie@example.com", "charlie_profile.jpg");
-
-        // Then add them as sitters
-        addTestSitter(1, "Dog lover with 5 years experience", true, false, 25.0, 0.0, "Dogs, Walking");
-        addTestSitter(2, "Certified cat behaviorist", true, false, 30.0, 0.0, "Cats, Grooming");
-        addTestSitter(3, "Exotic pet specialist", true, true, 35.0, 20.0, "Reptiles, Birds");
-
-        loadSitters();
     }
 
     private void addTestUser(String name, String studentId, String email, String photoUri) {
