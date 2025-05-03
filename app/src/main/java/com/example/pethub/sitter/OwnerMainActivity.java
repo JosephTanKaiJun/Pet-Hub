@@ -11,10 +11,12 @@ import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.pethub.R;
 import com.example.pethub.database.DatabaseHelper;
 import com.example.pethub.databinding.ActivityOwnerMainBinding;
 
@@ -31,7 +33,8 @@ public class OwnerMainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityOwnerMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
+        ImageButton btnBack = findViewById(R.id.btnBack);
+        btnBack.setOnClickListener(v -> finish());
         dbHelper = new DatabaseHelper(this);
         userId = getIntent().getIntExtra("USER_ID", -1);
         if (userId == -1) {

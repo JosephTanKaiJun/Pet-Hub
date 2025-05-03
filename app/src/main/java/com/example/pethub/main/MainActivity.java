@@ -24,8 +24,10 @@ import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class MainActivity extends AppCompatActivity {
-    private MaterialCardView searchSitterBtn, sitterSignupBtn ;
-    private FloatingActionButton fabChat;
+
+    private MaterialCardView searchSitterBtn, sitterSignupBtn;
+    private FloatingActionButton fabChat,fabProfile,fabSignOut,fabNews;
+
 
     private ConstraintLayout navHome;
     private int userId = 1;
@@ -53,11 +55,23 @@ public class MainActivity extends AppCompatActivity {
         sitterSignupBtn = findViewById(R.id.sitterSignupBtn);
         fabChat = findViewById(R.id.fabChat);
         navHome = findViewById(R.id.bookingHistoryCard);
-
+        fabProfile = findViewById(R.id.fabProfile);
+        fabSignOut = findViewById(R.id.fabSignOut);
         // Set click listeners
         txtUsername.setOnClickListener(v -> showDropdownMenu());
 
+        fabProfile.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, OwnerMainActivity.class);
+            intent.putExtra("USER_ID", userId);
+            startActivity(intent);
+        });
 
+        fabSignOut.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+            finish();
+        });
         searchSitterBtn.setOnClickListener(v -> {
             Intent intent = new Intent(this, SelectionActivity.class);
             intent.putExtra("USER_ID", userId);
