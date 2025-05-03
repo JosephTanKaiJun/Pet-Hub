@@ -33,5 +33,12 @@ public class community extends AppCompatActivity {
             Intent intent = new Intent(community.this, pod.class);
             startActivity(intent);
         });
+
+        Button btnGoToNews = findViewById(R.id.btnGoToNews);
+        btnGoToNews.setOnClickListener(v -> {
+            Intent intent = new Intent(community.this, news.class);
+            startActivity(intent);
+        });
+
     }
 }
