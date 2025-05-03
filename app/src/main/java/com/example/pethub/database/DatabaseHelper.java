@@ -275,10 +275,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.insert(TABLE_MESSAGES, null, values);
         db.close();
     }
+    private String getPhotoUri(int userId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(TABLE_USERS, new String[]{COLUMN_PHOTO_URI},
+                COLUMN_USER_ID + "=?", new String[]{String.valueOf(userId)}, null, null, null);
+        String uri = "";
+        if (cursor.moveToFirst()) {
+            uri = cursor.getString(0);
+        }
+        cursor.close();
+        return uri;
+    }
+
     public List<Conversation> getConversations(int userId) {
         List<Conversation> conversations = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
-
         String query = "SELECT DISTINCT "
                 + "CASE WHEN sender_id = ? THEN receiver_id ELSE sender_id END AS partner_id, "
                 + "MAX(" + COLUMN_TIMESTAMP + ") AS latest_timestamp "
@@ -294,12 +305,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 String timestamp = cursor.getString(1);
                 String partnerName = getUsername(partnerId); // Use the new method
                 String lastMessage = getLastMessage(userId, partnerId);
+                String photoUri = getPhotoUri(partnerId);
 
                 conversations.add(new Conversation(
                         partnerId,
                         partnerName, // Now using the username from Users table
                         lastMessage,
-                        timestamp
+                        timestamp,
+                        photoUri
                 ));
             } while (cursor.moveToNext());
         }

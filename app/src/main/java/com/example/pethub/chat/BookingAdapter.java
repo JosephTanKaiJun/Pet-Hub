@@ -1,9 +1,11 @@
 package com.example.pethub.chat;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
@@ -17,11 +19,11 @@ import java.util.List;
 
 public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingViewHolder> {
     private final List<Booking> bookings;
-
-    public BookingAdapter(List<Booking> bookings) {
+    private final int userId;
+    public BookingAdapter(List<Booking> bookings, int userId) { // Update constructor
         this.bookings = bookings;
+        this.userId = userId;
     }
-
     @NonNull
     @Override
     public BookingViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -54,6 +56,7 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
         holder.tvSitterName.setText(booking.getSitterName());
         holder.tvDate.setText(booking.getDate());
         holder.tvPetType.setText(booking.getPetType());
+
         if (booking.getPetType().equals("Animal")) {
             holder.tvSpecies.setText(booking.getSpecies());
         } else {
@@ -81,7 +84,6 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
             tvSpecies = itemView.findViewById(R.id.tvSpecies);
             tvRemarks = itemView.findViewById(R.id.tvRemarks);
             tvStatusBadge = itemView.findViewById(R.id.tvStatusBadge); // Add this line
-
         }
     }
 }

@@ -62,6 +62,9 @@
         <activity
             android:name=".sitter.OwnerMainActivity"
             android:exported="false" />
+        <activity
+            android:name=".chat.SitterProfileActivity"
+            android:exported="false" />
 
     </application>
 

@@ -26,7 +26,16 @@ public class ConversationListActivity extends AppCompatActivity implements Conve
 
         currentUserId = getIntent().getIntExtra("USER_ID", -1);
         if (currentUserId == -1) finish();
-
+        // In your ConversationListActivity's onCreate
+        int targetUserId = getIntent().getIntExtra("TARGET_USER_ID", -1);
+        if(targetUserId != -1) {
+            // Directly open chat with this user
+            Intent chatIntent = new Intent(this, ChatActivity.class);
+            chatIntent.putExtra("USER_ID", currentUserId);
+            chatIntent.putExtra("RECIPIENT_ID", targetUserId);
+            startActivity(chatIntent);
+            finish();
+        }
         dbHelper = new DatabaseHelper(this);
         initializeUI();
         loadConversations();

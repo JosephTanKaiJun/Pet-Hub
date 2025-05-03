@@ -87,7 +87,6 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(this, SitterApplicationActivity.class);
                 intent.putExtra("USER_ID", userId);
                 startActivity(intent);
-                finish();
             }
         });
 

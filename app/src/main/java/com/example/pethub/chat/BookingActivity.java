@@ -37,7 +37,7 @@ public class BookingActivity extends AppCompatActivity {
 
     private void loadBookings() {
         List<Booking> bookings = dbHelper.getBookingsForUser(userId);
-        adapter = new BookingAdapter(bookings);
+        adapter = new BookingAdapter(bookings, userId);
         bookingRecyclerView.setAdapter(adapter);
     }
 }
