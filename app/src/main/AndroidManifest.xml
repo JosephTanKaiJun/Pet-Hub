@@ -69,6 +69,7 @@
         <activity android:name=".community.ViewRatingsActivity" />
         <activity android:name=".community.RatePostActivity" />
         <activity android:name=".community.news" />
+        <activity android:name=".api.NewsActivity" />
 
     </application>
 

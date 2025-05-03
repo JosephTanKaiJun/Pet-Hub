@@ -10,6 +10,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+import com.example.pethub.api.NewsActivity;
 import com.example.pethub.sitter.SitterMainActivity;
 import com.example.pethub.sitter.SitterApplicationActivity;
 import com.example.pethub.chat.ConversationListActivity;
@@ -57,13 +58,20 @@ public class MainActivity extends AppCompatActivity {
         navHome = findViewById(R.id.bookingHistoryCard);
         fabProfile = findViewById(R.id.fabProfile);
         fabSignOut = findViewById(R.id.fabSignOut);
+        fabNews = findViewById(R.id.fabNews);
         // Set click listeners
         txtUsername.setOnClickListener(v -> showDropdownMenu());
 
         fabProfile.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, OwnerMainActivity.class);
-            intent.putExtra("USER_ID", userId);
-            startActivity(intent);
+            if (dbHelper.isUserSitter(userId)) {
+                Intent intent = new Intent(this, SitterMainActivity.class);
+                intent.putExtra("USER_ID", userId);
+                startActivity(intent);
+            } else {
+                Intent intent = new Intent(this, OwnerMainActivity.class);
+                intent.putExtra("USER_ID", userId);
+                startActivity(intent);
+            }
         });
 
         fabSignOut.setOnClickListener(v -> {
@@ -78,6 +86,11 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
+        fabNews.setOnClickListener(v -> {
+            Intent intent = new Intent(this, NewsActivity.class);
+            startActivity(intent);
+        });
+
         sitterSignupBtn.setOnClickListener(v -> {
             if (dbHelper.isUserSitter(userId)) {
                 Toast.makeText(this, "You are already a Sitter", Toast.LENGTH_SHORT).show();
@@ -89,7 +102,6 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(this, SitterApplicationActivity.class);
                 intent.putExtra("USER_ID", userId);
                 startActivity(intent);
-                finish();
             }
         });
 
