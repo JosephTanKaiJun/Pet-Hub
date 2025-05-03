@@ -11,7 +11,7 @@
         android:id="@+id/txtCommunityWelcome"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="🐾 Welcome to the PetHub Community!"
+        android:text="🐾 Welcome  to the PetHub Community!"
         android:textSize="20sp"
         android:textStyle="bold"
         android:textColor="#333333"
