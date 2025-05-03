@@ -62,6 +62,11 @@
         <activity
             android:name=".sitter.OwnerMainActivity"
             android:exported="false" />
+        <activity android:name=".community.community"/>
+        <activity android:name=".community.rating" />
+        <activity android:name=".community.pod" />
+        <activity android:name=".community.ViewRatingsActivity" />
+        <activity android:name=".community.RatePostActivity" />
 
     </application>
 

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="12dp"
+    android:background="@android:color/white"
+    android:elevation="2dp"
+    android:layout_marginBottom="10dp">
+
+    <TextView
+        android:id="@+id/textViewSitterName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Sitter Name"
+        android:textStyle="bold"
+        android:textSize="18sp"/>
+
+    <TextView
+        android:id="@+id/textViewAvgRating"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Avg Rating: 0.0"
+        android:layout_marginTop="4dp"/>
+
+    <RatingBar
+        android:id="@+id/ratingBar"
+        style="?android:attr/ratingBarStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:numStars="5"
+        android:stepSize="1.0"
+        android:isIndicator="false"
+        android:layout_marginTop="4dp"/>
+</LinearLayout>

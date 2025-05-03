@@ -24,7 +24,7 @@ import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class MainActivity extends AppCompatActivity {
-    private MaterialCardView searchSitterBtn, sitterSignupBtn;
+    private MaterialCardView searchSitterBtn, sitterSignupBtn ;
     private FloatingActionButton fabChat;
 
     private ConstraintLayout navHome;
@@ -103,6 +103,15 @@ public class MainActivity extends AppCompatActivity {
             intent.putExtra("USER_ID", userId);
             startActivity(intent);
         });
+
+        ConstraintLayout communityCard = findViewById(R.id.communityCard);
+        communityCard.setOnClickListener(v -> {
+            Intent intent = new Intent(this, com.example.pethub.community.community.class);
+            intent.putExtra("USER_ID", userId);
+            startActivity(intent);
+        });
+
+
     }
 
     private void showDropdownMenu() {

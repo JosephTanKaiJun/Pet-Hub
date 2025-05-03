@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="24dp"
+    android:background="#FAFAFA">
+
+    <TextView
+        android:id="@+id/txtCommunityWelcome"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="🐾 Welcome to the PetHub Community!"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="#333333"
+        android:gravity="center"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <Button
+        android:id="@+id/btnGoToRating"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Go to Rating Page"
+        android:layout_marginTop="24dp"
+        app:layout_constraintTop_toBottomOf="@id/txtCommunityWelcome"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <Button
+        android:id="@+id/btnViewRatings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="View All Ratings"
+        android:layout_marginTop="24dp"
+        app:layout_constraintTop_toBottomOf="@id/btnGoToPod"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <Button
+        android:id="@+id/btnGoToPod"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Post and Discussion"
+        android:layout_marginTop="24dp"
+        app:layout_constraintTop_toBottomOf="@id/btnGoToRating"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
