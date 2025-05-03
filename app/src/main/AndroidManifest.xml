@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.pethub">
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -62,9 +63,14 @@
         <activity
             android:name=".sitter.OwnerMainActivity"
             android:exported="false" />
-        <activity
-            android:name=".chat.SitterProfileActivity"
-            android:exported="false" />
+
+        <activity android:name=".community.community"/>
+        <activity android:name=".community.rating" />
+        <activity android:name=".community.pod" />
+        <activity android:name=".community.ViewRatingsActivity" />
+        <activity android:name=".community.RatePostActivity" />
+        <activity android:name=".community.news" />
+        <activity android:name=".api.NewsActivity" />
 
     </application>
 

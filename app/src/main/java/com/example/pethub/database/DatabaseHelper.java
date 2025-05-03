@@ -57,6 +57,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // Hiring requests table
     private static final String TABLE_HIRING_REQUESTS = "hiring_requests";
 
+    private static final String TABLE_COMMUNITY = "community";
+    private static final String COLUMN_COMMUNITY_ID = "id";
+    private static final String COLUMN_COMMUNITY_USERNAME = "username";
+    private static final String COLUMN_COMMUNITY_COMMENT = "comment";
+
+    // community rating
+
+    // Ratings table
+    private static final String TABLE_RATINGS = "ratings";
+    private static final String COLUMN_RATING_ID = "id";
+    private static final String COLUMN_RATING_USERNAME = "username";
+    private static final String COLUMN_RATING_SITTER_NAME = "sitter_name";
+    private static final String COLUMN_RATING_DETAILS = "details";
+    private static final String COLUMN_RATING_STARS = "stars";
+
+
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -116,6 +132,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + "timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,"
                 + "FOREIGN KEY(" + COLUMN_USER_ID + ") REFERENCES " + TABLE_USERS + "(" + COLUMN_USER_ID + "))");
 
+        String CREATE_COMMUNITY_TABLE = "CREATE TABLE " + TABLE_COMMUNITY + "("
+                + COLUMN_COMMUNITY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + COLUMN_COMMUNITY_USERNAME + " TEXT NOT NULL,"
+                + COLUMN_COMMUNITY_COMMENT + " TEXT NOT NULL)";
+        db.execSQL(CREATE_COMMUNITY_TABLE);
+
+        String CREATE_RATINGS_TABLE = "CREATE TABLE " + TABLE_RATINGS + "("
+                + COLUMN_RATING_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + COLUMN_RATING_USERNAME + " TEXT NOT NULL,"
+                + COLUMN_RATING_SITTER_NAME + " TEXT NOT NULL,"
+                + COLUMN_RATING_DETAILS + " TEXT NOT NULL,"
+                + COLUMN_RATING_STARS + " INTEGER NOT NULL)";
+        db.execSQL(CREATE_RATINGS_TABLE);
+
         ContentValues values = new ContentValues();
         values.put(COLUMN_USER_ID, 1);
         values.put(COLUMN_USERNAME, "Test User");
@@ -125,6 +155,96 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(COLUMN_IS_SITTER, 0);
         db.insert(TABLE_USERS, null, values);
     }
+
+    public boolean addOrUpdateRating(String username, String sitterName, String details, int stars) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_RATING_USERNAME, username);
+        values.put(COLUMN_RATING_SITTER_NAME, sitterName);
+        values.put(COLUMN_RATING_DETAILS, details);
+        values.put(COLUMN_RATING_STARS, stars);
+
+        long result = db.insert(TABLE_RATINGS, null, values);
+        return result != -1;
+    }
+    public List<String> getAllRatingsWithAverageAndDetails() {
+        List<String> resultList = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        // Step 1: Get distinct sitter names
+        Cursor sitterCursor = db.rawQuery("SELECT DISTINCT " + COLUMN_RATING_SITTER_NAME + " FROM " + TABLE_RATINGS, null);
+
+        if (sitterCursor.moveToFirst()) {
+            do {
+                String sitter = sitterCursor.getString(0);
+
+                // Step 2: Get average rating for this sitter
+                Cursor avgCursor = db.rawQuery(
+                        "SELECT AVG(" + COLUMN_RATING_STARS + ") FROM " + TABLE_RATINGS +
+                                " WHERE " + COLUMN_RATING_SITTER_NAME + " = ?",
+                        new String[]{sitter}
+                );
+
+                float avg = 0;
+                if (avgCursor.moveToFirst()) {
+                    avg = avgCursor.getFloat(0);
+                }
+                avgCursor.close();
+
+                // Step 3: Get review details
+                Cursor detailCursor = db.rawQuery(
+                        "SELECT " + COLUMN_RATING_DETAILS + " FROM " + TABLE_RATINGS +
+                                " WHERE " + COLUMN_RATING_SITTER_NAME + " = ?",
+                        new String[]{sitter}
+                );
+
+                StringBuilder detailsBuilder = new StringBuilder();
+                while (detailCursor.moveToNext()) {
+                    String detail = detailCursor.getString(0);
+                    detailsBuilder.append("• ").append(detail).append("\n");
+                }
+                detailCursor.close();
+
+                String summary = sitter + ": ⭐" + String.format("%.1f", avg) + "\n" + detailsBuilder.toString();
+                resultList.add(summary);
+
+            } while (sitterCursor.moveToNext());
+        }
+
+        sitterCursor.close();
+        return resultList;
+    }
+
+
+    // Add community comment
+    public void addCommunityComment(String username, String comment) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("username", username);
+        values.put("comment", comment);
+        db.insert("community", null, values);
+        db.close();
+    }
+
+    // Get all community comments
+    public List<String> getAllCommunityComments() {
+        List<String> comments = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT username, comment FROM community ORDER BY id DESC", null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                String username = cursor.getString(0);
+                String comment = cursor.getString(1);
+                comments.add(username + ": " + comment);
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        db.close();
+        return comments;
+    }
+
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {

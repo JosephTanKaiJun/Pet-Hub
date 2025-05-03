@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Pet Hub</string>
     <string name="profile_picture">Profile Picture</string>
+    <string name="news_image_desc">News article image</string>
 </resources>

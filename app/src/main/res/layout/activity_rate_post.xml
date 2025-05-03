@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+    <LinearLayout
+        android:orientation="vertical" android:padding="16dp"
+        android:layout_width="match_parent" android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/textSitterName"
+            android:text="Rating for:"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <EditText
+            android:id="@+id/editUsername"
+            android:layout_width="match_parent"
+            android:layout_height="92dp"
+            android:layout_marginTop="48dp"
+            android:hint="Your name" />
+
+        <EditText
+            android:id="@+id/editDetails"
+            android:hint="Your review"
+            android:minLines="3"
+            android:inputType="textMultiLine"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"/>
+
+        <RatingBar
+            android:id="@+id/ratingBar"
+            android:numStars="5"
+            android:stepSize="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp" />
+
+        <Button
+            android:id="@+id/btnRateSubmit"
+            android:text="Submit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"/>
+
+    </LinearLayout>
+</ScrollView>
