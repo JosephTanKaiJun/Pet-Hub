@@ -123,8 +123,10 @@ public class SitterEditActivity extends AppCompatActivity {
         return output;
     }
 
+    // In SitterApplicationActivity and SitterEditActivity
     private String saveImageToInternalStorage(Bitmap bitmap) {
-        String filename = "user_" + userId + "_profile.jpg";
+        // Add timestamp to filename
+        String filename = "user_" + userId + "_profile_" + System.currentTimeMillis() + ".jpg";
         File directory = new File(getFilesDir(), "profilepic");
         if (!directory.exists()) {
             directory.mkdirs();

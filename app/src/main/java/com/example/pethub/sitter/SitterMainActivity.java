@@ -54,6 +54,7 @@ public class SitterMainActivity extends AppCompatActivity {
             Intent intent = new Intent(this, SitterEditActivity.class);
             intent.putExtra("USER_ID", userId);
             startActivity(intent);
+            finish();
         });
     }
 

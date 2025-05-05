@@ -46,6 +46,7 @@ public class ConversationAdapter extends RecyclerView.Adapter<ConversationAdapte
         String photoUri = conversation.getPhotoUri();
         if (photoUri != null && !photoUri.isEmpty()) {
             // Construct the full file path
+// Ensure the file path is correctly built using the stored filename
             File imageFile = new File(new File(holder.itemView.getContext().getFilesDir(), "profilepic"), photoUri);
             if (imageFile.exists()) {
                 Glide.with(holder.itemView.getContext())

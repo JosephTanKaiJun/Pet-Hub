@@ -17,7 +17,7 @@ import java.util.List;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "PetHub.db";
-    private static final int DATABASE_VERSION = 18; // Incremented from 15
+    private static final int DATABASE_VERSION = 28;
 
     // Users table
     public static final String TABLE_USERS = "users";
